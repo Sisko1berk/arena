@@ -109,7 +109,10 @@ pygame.mixer.init()
 pygame.mixer.set_num_channels(8)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
 pygame.display.set_caption("Futbol Simulasyonu")
+
+g
 
 # --- SES YÜKLEME ---
 # 1. Arkaplan
@@ -330,6 +333,7 @@ frame_counter = 0
 added_time_1 = random.randint(1, 3)
 added_time_2 = random.randint(2, 8)
 display_added_time = False
+end_match_timer = 0 # Mac sonu bekleme suresi icin
 
 # MENU VARIABLES
 selected_home_idx = 0
@@ -434,6 +438,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+        # --- MENU ETKILESIMI ---
         if state == "MENU":
             list_start_y = 120
             visible_h = HEIGHT - 220
@@ -494,6 +500,20 @@ while running:
                 if menu_scroll_y > 0: menu_scroll_y = 0
                 if menu_scroll_y < -max_scroll: menu_scroll_y = -max_scroll
 
+        # --- MAC SONU YENI MAC BUTONU ETKILESIMI ---
+        elif state == "FULLTIME":
+            if end_match_timer > 2 * FPS: # 2 Saniye gectiyse buton aktif
+                # Buton konumu (Mac Baslat butonu ile ayni yer olsun)
+                restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 150, 300, 60)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mx, my = pygame.mouse.get_pos()
+                    if restart_btn_rect.collidepoint(mx, my):
+                        # Menuye don
+                        state = "MENU"
+                        # Eger gol muzigi caliyorsa sustur
+                        if goal_sound_channel: goal_sound_channel.stop()
+
+    # --- DRAWING ---
     if state == "MENU":
         screen.fill(MENU_BG)
         title = font_menu_title.render("TAKIM SEÇİMİ", True, GOLD)
@@ -538,7 +558,7 @@ while running:
                     display_added_time = True
                     if sim_minute >= 45 + added_time_1:
                         state = "HALFTIME"
-                        pygame.time.delay(500) # (500 ms = 0.5 saniye bekleme)
+                        pygame.time.delay(500) # Kisa bekleme
                 else:
                     display_added_time = False
             elif state == "SECOND_HALF":
@@ -547,12 +567,13 @@ while running:
                     display_added_time = True
                     if sim_minute >= 90 + added_time_2:
                         state = "FULLTIME"
+                        end_match_timer = 0 # Sayaci sifirla
                 else:
                     display_added_time = False
 
             if state == "FIRST_HALF" and display_added_time and sim_minute >= 45 + added_time_1:
                 state = "HALFTIME"
-                pygame.time.delay(500) # Kisa bekleme
+                pygame.time.delay(500)
 
             if goal_rotating:
                 goal_angle = (goal_angle + goal_rot_speed) % (2 * math.pi)
@@ -588,12 +609,12 @@ while running:
                             score1 += 1
                             goal_events_1.append(time_mark)
                             ball1.x, ball1.y = center_x, center_y
-                            play_goal_music_for_team(team1_name) # <-- SES MANTIGI CAGIRILIYOR
+                            play_goal_music_for_team(team1_name) # <-- SES MANTIGI
                         else:
                             score2 += 1
                             goal_events_2.append(time_mark)
                             ball2.x, ball2.y = center_x, center_y
-                            play_goal_music_for_team(team2_name) # <-- SES MANTIGI CAGIRILIYOR
+                            play_goal_music_for_team(team2_name) # <-- SES MANTIGI
 
                         if score1 + score2 >= 1: goal_rotating = True
                         ball1.vx = random.choice([-SPEED, SPEED]) * random.uniform(0.8, 1.2)
@@ -602,7 +623,7 @@ while running:
                         ball2.vy = random.choice([-SPEED, SPEED]) * random.uniform(0.8, 1.2)
 
         if state == "HALFTIME":
-            pygame.time.delay(500)
+            pygame.time.delay(500) # Kisa bekleme
             state = "SECOND_HALF"
             frame_counter = 0
             display_added_time = False
@@ -666,12 +687,25 @@ while running:
             gx, gy = WIDTH//2 - goll_surf.get_width()//2, HEIGHT//2 - 50
             screen.blit(outline_surf, (gx+4, gy+4))
             screen.blit(goll_surf, (gx, gy))
+
         if state == "HALFTIME":
             overlay = font_event.render("İlk Yarı", True, WHITE)
             screen.blit(overlay, (WIDTH//2 - overlay.get_width()//2, HEIGHT//2 + 50))
+
         elif state == "FULLTIME":
+            end_match_timer += 1 # Sayaci artir
             overlay = font_event.render("Maç Sonucu", True, WHITE)
             screen.blit(overlay, (WIDTH//2 - overlay.get_width()//2, HEIGHT//2 + 50))
+
+            # --- YENI MAC BUTONU CIZIMI ---
+            if end_match_timer > 2 * FPS: # 2 saniye sonra ciz
+                restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 150, 300, 60)
+                pygame.draw.rect(screen, GRASS_1, restart_btn_rect, border_radius=15)
+                pygame.draw.rect(screen, WHITE, restart_btn_rect, 3, border_radius=15)
+
+                restart_txt = font_menu_title.render("MENÜYE DÖN", True, WHITE)
+                restart_txt_rect = restart_txt.get_rect(center=restart_btn_rect.center)
+                screen.blit(restart_txt, restart_txt_rect)
 
     pygame.display.flip()
     clock.tick(FPS)
