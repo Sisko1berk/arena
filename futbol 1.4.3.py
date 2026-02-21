@@ -112,7 +112,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 pygame.display.set_caption("Futbol Simulasyonu")
 
-g
 
 # --- SES YÜKLEME ---
 # 1. Arkaplan

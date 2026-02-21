@@ -2,20 +2,11 @@ import pygame
 import math
 import random
 import os
-import numpy as np
-
-# Try importing OpenCV for recording
-try:
-    import cv2
-    VIDEO_AVAILABLE = True
-except ImportError:
-    VIDEO_AVAILABLE = False
-    print("OpenCV not found. Install it with 'pip install opencv-python' to record video.")
 
 # --- CONFIGURATION ---
 WIDTH, HEIGHT = 800, 800
 FPS = 80
-FRAMES_PER_SIM_MINUTE = 31
+FRAMES_PER_SIM_MINUTE = 24
 
 ARENA_RADIUS = 250
 BALL_RADIUS = 38
@@ -44,28 +35,27 @@ MENU_BG = (30, 30, 40)
 SELECTED_COLOR = (50, 255, 50)
 SCROLLBAR_BG = (50, 50, 60)
 SCROLLBAR_HANDLE = (150, 150, 150)
-RED_CARD_COLOR = (250, 10, 10) 
+RED_CARD_COLOR = (250, 10, 10)
 OVERLAY_BG = (20, 20, 20, 200)
-# TABLE_BG is no longer used for the main panel, but kept for reference
-TABLE_BG = (80, 80, 80, 230) 
-POST_INNER_COLOR = (50, 50, 50) 
-SHADOW_COLOR = (0, 0, 0, 80) 
+TABLE_BG = (80, 80, 80, 230)
+POST_INNER_COLOR = (50, 50, 50)
+SHADOW_COLOR = (0, 0, 0, 80)
 
 # --- SES AYARLARI ---
-STADIUM_FILE = "stadium.mp3"
-COLLISION_FILE = "collision1.wav" 
-RED_CARD_FILE = "whistle.wav" 
+STADIUM_SOUND = "stadium.mp3"
+COLLISION_FILE = "collision1.wav"
+RED_CARD_FILE = "whistle.wav"
 
 GS_GOAL_FILE = "gs.wav"
-FB_GOAL_FILE = "fb.wav"   
-BJK_GOAL_FILE = "bjk.wav" 
-TS_GOAL_FILE = "ts.wav"   
+FB_GOAL_FILE = "fb.wav"
+BJK_GOAL_FILE = "bjk.wav"
+TS_GOAL_FILE = "ts.wav"
 
 GOAL1_FILE = "goal1.wav"
 GOAL2_FILE = "goal2.wav"
 GOAL3_FILE = "goal3.wav"
 
-STADIUM_VOLUME = 0.4
+STADIUM_VOLUME = 0.2
 GOAL_MUSIC_VOLUME = 0.6
 COLLISION_VOLUME = 0.02
 RED_CARD_VOLUME = 0.4
@@ -145,13 +135,10 @@ TEAMS = {
 TEAM_NAMES = list(TEAMS.keys())
 PLAYER_DATABASE = {}
 
-# --- LOAD PLAYER DATABASE (FIXED PATH) ---
 def load_player_database():
     db = {}
     base_path = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(base_path, "players.txt")
-    
-    print(f"Looking for players.txt at: {file_path}") 
 
     if os.path.exists(file_path):
         try:
@@ -159,18 +146,13 @@ def load_player_database():
                 for line in f:
                     if ":" in line:
                         parts = line.split(":")
-                        t_name = parts[0].strip().upper() 
+                        t_name = parts[0].strip().upper()
                         p_names = [p.strip() for p in parts[1].split(",")]
-                        p_names = [p for p in p_names if p] 
-                        
+                        p_names = [p for p in p_names if p]
                         if p_names:
                             db[t_name] = p_names
-            print(f"SUCCESS: Loaded {len(db)} teams from database.") 
         except Exception as e:
-            print(f"ERROR reading players.txt: {e}")
-    else:
-        print("ERROR: players.txt file NOT FOUND at that location.")
-        
+            pass
     return db
 
 PLAYER_DATABASE = load_player_database()
@@ -184,52 +166,45 @@ def get_random_player_name(team_key):
 
 # --- SETUP ---
 pygame.init()
-pygame.mixer.init()
+pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=4096)
 pygame.mixer.set_num_channels(8)
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# Ana pencere ve çizim penceresi
+main_screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.Surface((WIDTH, HEIGHT))
 pygame.display.set_caption("Futbol Simulasyonu")
 
-# --- SES YÜKLEME ---
+# --- STADIUM SESİNİ YÜKLE ---
 stadium_music_loaded = False
-if os.path.exists(STADIUM_FILE):
+if os.path.exists(STADIUM_SOUND):
     try:
-        pygame.mixer.music.load(STADIUM_FILE)
+        pygame.mixer.music.load(STADIUM_SOUND)
         pygame.mixer.music.set_volume(STADIUM_VOLUME)
         stadium_music_loaded = True
-    except Exception:
+    except:
         pass
 
-# --- COLLISION SOUND ---
 collision_sound = None
 if os.path.exists(COLLISION_FILE):
     try:
         collision_sound = pygame.mixer.Sound(COLLISION_FILE)
         collision_sound.set_volume(COLLISION_VOLUME)
-    except:
-        pass
+    except: pass
 
-# --- RED CARD SOUND ---
 red_card_sound = None
 if os.path.exists(RED_CARD_FILE):
     try:
         red_card_sound = pygame.mixer.Sound(RED_CARD_FILE)
         red_card_sound.set_volume(RED_CARD_VOLUME)
-    except:
-        pass
+    except: pass
 
-# UPDATED: Audio Priority System
 def play_collision_sound():
     global goal_sound_channel
-    # If goal music is playing, DO NOT play collision sound
-    if goal_sound_channel and goal_sound_channel.get_busy():
-        return
-    if collision_sound:
-        collision_sound.play()
+    if goal_sound_channel and goal_sound_channel.get_busy(): return
+    if collision_sound: collision_sound.play()
 
 def play_red_card_sound():
-    if red_card_sound:
-        red_card_sound.play()
+    if red_card_sound: red_card_sound.play()
 
 goal_sounds = {}
 def load_sound(path):
@@ -242,10 +217,9 @@ def load_sound(path):
     return None
 
 goal_sounds["GS"] = load_sound(GS_GOAL_FILE)
-goal_sounds["FB"] = load_sound(FB_GOAL_FILE)   
-goal_sounds["BJK"] = load_sound(BJK_GOAL_FILE) 
-goal_sounds["TS"] = load_sound(TS_GOAL_FILE)   
-
+goal_sounds["FB"] = load_sound(FB_GOAL_FILE)
+goal_sounds["BJK"] = load_sound(BJK_GOAL_FILE)
+goal_sounds["TS"] = load_sound(TS_GOAL_FILE)
 goal_sounds["GOAL1"] = load_sound(GOAL1_FILE)
 goal_sounds["GOAL2"] = load_sound(GOAL2_FILE)
 goal_sounds["GOAL3"] = load_sound(GOAL3_FILE)
@@ -255,27 +229,20 @@ if goal_sounds["GOAL1"]: general_pool.append(goal_sounds["GOAL1"])
 if goal_sounds["GOAL2"]: general_pool.append(goal_sounds["GOAL2"])
 if goal_sounds["GOAL3"]: general_pool.append(goal_sounds["GOAL3"])
 
-# FONTS
-font_score = pygame.font.SysFont("impact", 54) 
+font_score = pygame.font.SysFont("impact", 54)
 font_timer = pygame.font.SysFont("impact", 26)
 font_event = pygame.font.SysFont("impact", 50)
-font_team = pygame.font.SysFont("impact", 48) 
+font_team = pygame.font.SysFont("impact", 48)
 font_goal_list = pygame.font.SysFont("impact", 14)
 font_goll_msg = pygame.font.SysFont("impact", 90)
 font_menu_title = pygame.font.SysFont("impact", 40)
 font_menu_item = pygame.font.SysFont("impact", 20)
-font_ball = pygame.font.SysFont("impact", 20)
 font_notification = pygame.font.SysFont("impact", 32)
-font_small = pygame.font.SysFont("impact", 14)
 
 clock = pygame.time.Clock()
 
-# --- HELPER FUNCTIONS ---
-
-# --- NEW: Cinematic Vignette (Dark Corners) ---
 def draw_cinematic_vignette(surface):
-    # This creates a dark rim around the screen to make it look like a broadcast
-    pygame.draw.rect(surface, (0,0,0), (0,0,WIDTH,HEIGHT), 20) 
+    pygame.draw.rect(surface, (0,0,0), (0,0,WIDTH,HEIGHT), 20)
 
 def draw_striped_pitch(surface, cx, cy, radius):
     pygame.draw.circle(surface, GRASS_1, (cx, cy), radius)
@@ -286,15 +253,14 @@ def draw_striped_pitch(surface, cx, cy, radius):
     pygame.draw.circle(mask_surf, (255, 255, 255, 255), (radius, radius), radius)
     stripe_surf.blit(mask_surf, (0,0), special_flags=pygame.BLEND_RGBA_MIN)
     surface.blit(stripe_surf, (cx - radius, cy - radius))
-    
-    # --- NEW: RGB GRADIENT EDGE ---
+
     for angle in range(0, 360):
         rad_start = math.radians(angle)
-        rad_end = math.radians(angle + 1.5) 
+        rad_end = math.radians(angle + 1.5)
         start_pos = (cx + math.cos(rad_start) * radius, cy + math.sin(rad_start) * radius)
         end_pos = (cx + math.cos(rad_end) * radius, cy + math.sin(rad_end) * radius)
         color = pygame.Color(0)
-        color.hsla = (angle % 360, 100, 50, 100) 
+        color.hsla = (angle % 360, 100, 50, 100)
         pygame.draw.line(surface, color, start_pos, end_pos, 6)
 
     pygame.draw.circle(surface, WHITE, (cx, cy), 50, 4)
@@ -324,7 +290,6 @@ def draw_real_goal(surface, cx, cy, radius, angle, width_rad):
         lx2 = p2x + (b2x - p2x) * ratio
         ly2 = p2y + (b2y - p2y) * ratio
         pygame.draw.line(surface, NET_COLOR, (lx1, ly1), (lx2, ly2), 1)
-
         lx3 = p1x + (p2x - p1x) * ratio
         ly3 = p1y + (p2y - p1y) * ratio
         lx4 = b1x + (b2x - b1x) * ratio
@@ -345,7 +310,6 @@ def get_random_spawn(cx, cy, r_limit):
         if dist < r_limit - BALL_RADIUS - 10:
             return rx, ry
 
-# --- NEW: PARTICLE CLASS ---
 class Particle:
     def __init__(self, x, y, color):
         self.x = x
@@ -355,8 +319,8 @@ class Particle:
         speed = random.uniform(1, 3)
         self.vx = math.cos(angle) * speed
         self.vy = math.sin(angle) * speed
-        self.life = FPS * 0.8 
-        self.fade_start = FPS * 0.5 
+        self.life = FPS * 0.8
+        self.fade_start = FPS * 0.5
         self.radius = random.randint(1, 3)
 
     def update(self):
@@ -369,7 +333,6 @@ class Particle:
             alpha = 255
             if self.life < self.fade_start:
                 alpha = int(255 * (self.life / self.fade_start))
-            
             s = pygame.Surface((self.radius*2, self.radius*2), pygame.SRCALPHA)
             pygame.draw.circle(s, (*self.color, alpha), (self.radius, self.radius), self.radius)
             surface.blit(s, (int(self.x - self.radius), int(self.y - self.radius)))
@@ -389,22 +352,38 @@ class Ball:
         self.speed_multiplier = 1
         self.shadow_offset = 8
 
+        self.history = []
+        self.max_history = 10
+
+        self.trail_surfaces = []
+        for i in range(self.max_history):
+            ratio = i / self.max_history
+            trail_radius = int(self.radius * ratio * 0.8)
+            if trail_radius > 0:
+                surf = pygame.Surface((trail_radius * 2, trail_radius * 2), pygame.SRCALPHA)
+                alpha = int(255 * ratio * 0.5)
+                pygame.draw.circle(surf, (*self.color[0], alpha), (trail_radius, trail_radius), trail_radius)
+                self.trail_surfaces.append((trail_radius, surf))
+            else:
+                self.trail_surfaces.append((0, None))
+
     def move(self):
+        self.history.append((self.x, self.y))
+        if len(self.history) > self.max_history:
+            self.history.pop(0)
+
         self.vy += GRAVITY
-        
         if self.nerf_timer > 0:
             self.nerf_timer -= 1
-            self.speed_multiplier = 0.8 
+            self.speed_multiplier = 0.8
         else:
             self.speed_multiplier = 1.0
 
-        current_friction = FRICTION 
-        
+        current_friction = FRICTION
         self.vx *= current_friction
         self.vy *= current_friction
-        
         current_speed = math.hypot(self.vx, self.vy)
-        
+
         target_speed = SPEED * self.speed_multiplier
         target_min_speed = MIN_SPEED * self.speed_multiplier
 
@@ -415,31 +394,32 @@ class Ball:
         elif current_speed == 0:
             self.vx = random.choice([-1, 1]) * target_min_speed
             self.vy = random.choice([-1, 1]) * target_min_speed
-            
+
         self.x += self.vx
         self.y += self.vy
 
     def draw(self, surface):
+        for i, (hx, hy) in enumerate(self.history):
+            if i < len(self.trail_surfaces):
+                tr, surf = self.trail_surfaces[i]
+                if surf:
+                    surface.blit(surf, (int(hx) - tr, int(hy) - tr))
+
         shadow_surf = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(shadow_surf, SHADOW_COLOR, (self.radius, self.radius), self.radius - 2)
         surface.blit(shadow_surf, (int(self.x) - self.radius + self.shadow_offset, int(self.y) - self.radius + self.shadow_offset))
 
         ball_surf = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
-        
         pygame.draw.circle(ball_surf, self.color[0], (self.radius, self.radius), self.radius)
-        
         half_rect = pygame.Rect(self.radius, 0, self.radius, self.radius * 2)
         pygame.draw.rect(ball_surf, self.color[1], half_rect)
-        
         mask_surf = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(mask_surf, (255, 255, 255), (self.radius, self.radius), self.radius)
-        
         ball_surf.blit(mask_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
-        
         pygame.draw.circle(ball_surf, WHITE, (self.radius, self.radius), self.radius, 4)
-        
+
         surface.blit(ball_surf, (int(self.x) - self.radius, int(self.y) - self.radius))
-        
+
         if self.nerf_timer > 0:
             pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), self.radius + 4, 2)
 
@@ -459,15 +439,13 @@ class Ball:
 
             hit_x = self.x + nx * self.radius
             hit_y = self.y + ny * self.radius
-            
             p_color = random.choice(self.color)
-            for _ in range(6): 
+            for _ in range(6):
                 p = Particle(hit_x, hit_y, p_color)
                 p.vx += nx * 2
                 p.vy += ny * 2
                 particles.append(p)
-
-            return True 
+            return True
         return False
 
     def collide_post(self, px, py):
@@ -504,8 +482,8 @@ def resolve_collisions(b1, b2):
         rx = b2.vx - b1.vx
         ry = b2.vy - b1.vy
         vel_along_normal = rx * nx + ry * ny
-        if vel_along_normal > 0: return False 
-        
+        if vel_along_normal > 0: return False
+
         j = -(1 + ELASTICITY) * vel_along_normal
         j /= (1 / b1.mass + 1 / b2.mass)
         impulse_x = j * nx
@@ -514,7 +492,7 @@ def resolve_collisions(b1, b2):
         b1.vy -= impulse_y / b1.mass
         b2.vx += impulse_x / b2.mass
         b2.vy += impulse_y / b2.mass
-        return True 
+        return True
 
 class RedCard:
     def __init__(self, cx, cy):
@@ -527,8 +505,8 @@ class RedCard:
         self.width = 16
         self.height = 24
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2, self.width, self.height)
-        self.life_timer = 10 * FRAMES_PER_SIM_MINUTE 
-        self.blink_start_time = 5 * FRAMES_PER_SIM_MINUTE 
+        self.life_timer = 10 * FRAMES_PER_SIM_MINUTE
+        self.blink_start_time = 5 * FRAMES_PER_SIM_MINUTE
         self.visible = True
         self.active = True
 
@@ -567,32 +545,34 @@ class RedCard:
         dist_sq = dx*dx + dy*dy
         if dist_sq < ball.radius**2:
             self.active = False
-            play_red_card_sound() 
+            play_red_card_sound()
             return True
         return False
 
-# --- GLOBAL GAME VARIABLES ---
+# GLOBAL GAME VARIABLES
 center_x, center_y = WIDTH // 2, HEIGHT // 2 + 40
 score1, score2 = 0, 0
 goal_angle = 1 * math.pi / 2
 goal_rotating = False
 goal_rot_speed = 0.015
 goll_timer = 0
-goal_text_color = GOLD 
-goal_events_1 = [] 
-goal_events_2 = [] 
+goal_text_color = GOLD
+goal_events_1 = []
+goal_events_2 = []
 state = "MENU"
 frame_counter = 0
-added_time_1 = random.randint(2, 4)
-added_time_2 = random.randint(3, 9)
+
+screen_shake_timer = 0
+
+added_time_1 = random.randint(0, 1)
+added_time_2 = random.randint(1, 2)
 display_added_time = False
 end_match_timer = 0
-halftime_timer = 0 
+halftime_timer = 0
 red_card_obj = None
 red_card_spawned_this_half = False
 paused = False
 
-# MENU VARIABLES
 selected_home_idx = 0
 selected_away_idx = 1
 team1_name = ""
@@ -607,85 +587,47 @@ ball2 = None
 crowd = []
 goal_sound_channel = None
 
-# --- RECORDING VARIABLES ---
-is_recording = False
-video_writer = None
-video_out_path = "match_replay.mp4"
-
-def toggle_recording():
-    global is_recording, video_writer
-    if not VIDEO_AVAILABLE:
-        return
-    
-    if not is_recording:
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v') 
-        video_writer = cv2.VideoWriter(video_out_path, fourcc, float(FPS), (WIDTH, HEIGHT))
-        is_recording = True
-        print(f"Recording started... ({video_out_path})")
-    else:
-        is_recording = False
-        if video_writer:
-            video_writer.release()
-            video_writer = None
-        print("Recording saved.")
-
-# --- UPDATED: Helper for outlined text with custom outline color ---
 def draw_text_with_outline(surface, text, font, color, x, y, align="center", outline_col=BLACK):
     offsets = [(-2, -2), (-2, 2), (2, -2), (2, 2), (-2, 0), (2, 0), (0, -2), (0, 2)]
-    
-    # Render outline
     for ox, oy in offsets:
         surf = font.render(text, True, outline_col)
-        if align == "center":
-            rect = surf.get_rect(center=(x + ox, y + oy))
-        elif align == "right":
-            rect = surf.get_rect(topright=(x + ox, y + oy))
-        else: # left
-            rect = surf.get_rect(topleft=(x + ox, y + oy))
+        if align == "center": rect = surf.get_rect(center=(x + ox, y + oy))
+        elif align == "right": rect = surf.get_rect(topright=(x + ox, y + oy))
+        else: rect = surf.get_rect(topleft=(x + ox, y + oy))
         surface.blit(surf, rect)
-        
-    # Render main text
+
     surf = font.render(text, True, color)
-    if align == "center":
-        rect = surf.get_rect(center=(x, y))
-    elif align == "right":
-        rect = surf.get_rect(topright=(x, y))
-    else: # left
-        rect = surf.get_rect(topleft=(x, y))
+    if align == "center": rect = surf.get_rect(center=(x, y))
+    elif align == "right": rect = surf.get_rect(topright=(x, y))
+    else: rect = surf.get_rect(topleft=(x, y))
     surface.blit(surf, rect)
 
 def play_goal_music_for_team(team_short_name):
     global goal_sound_channel
-    if goal_sound_channel and goal_sound_channel.get_busy():
-        goal_sound_channel.stop()
+    if goal_sound_channel and goal_sound_channel.get_busy(): goal_sound_channel.stop()
 
     sound_to_play = None
-    if team_short_name == "GS":
-        sound_to_play = goal_sounds["GS"]
-    elif team_short_name == "FB":
-        sound_to_play = goal_sounds["FB"]
-    elif team_short_name == "BJK":
-        sound_to_play = goal_sounds["BJK"]
-    elif team_short_name == "TS":
-        sound_to_play = goal_sounds["TS"]
+    if team_short_name == "GS": sound_to_play = goal_sounds["GS"]
+    elif team_short_name == "FB": sound_to_play = goal_sounds["FB"]
+    elif team_short_name == "BJK": sound_to_play = goal_sounds["BJK"]
+    elif team_short_name == "TS": sound_to_play = goal_sounds["TS"]
     else:
-        if len(general_pool) > 0:
-            sound_to_play = random.choice(general_pool)
+        if len(general_pool) > 0: sound_to_play = random.choice(general_pool)
 
-    if sound_to_play:
-        goal_sound_channel = sound_to_play.play()
+    if sound_to_play: goal_sound_channel = sound_to_play.play()
 
 def start_match():
     global ball1, ball2, crowd, team1_name, team2_name, team1_colors, team2_colors, state, score1, score2, goal_events_1, goal_events_2, frame_counter, goal_rotating, goal_sound_channel
-    global red_card_obj, red_card_spawned_this_half, halftime_timer, particles
-    
+    global red_card_obj, red_card_spawned_this_half, halftime_timer, particles, screen_shake_timer
+
     score1, score2 = 0, 0
     goal_events_1 = []
     goal_events_2 = []
     frame_counter = 0
     goal_rotating = False
     particles = []
-    
+    screen_shake_timer = 0
+
     red_card_obj = None
     red_card_spawned_this_half = False
     halftime_timer = 0
@@ -707,16 +649,14 @@ def start_match():
     crowd = []
     for _ in range(120):
         rand_val = random.random()
-        if rand_val < 0.45:
-            col = random.choice(team1_colors)
-        elif rand_val < 0.90:
-            col = random.choice(team2_colors)
-        else:
-            col = (50, 50, 50)
+        if rand_val < 0.45: col = random.choice(team1_colors)
+        elif rand_val < 0.90: col = random.choice(team2_colors)
+        else: col = (50, 50, 50)
         crowd.append((random.randint(0, WIDTH), random.randint(0, HEIGHT), col))
 
+    # MAÇ BAŞLADIĞINDA MÜZİĞİ BAŞLAT (Eğer yüklendiyse)
     if stadium_music_loaded:
-        pygame.mixer.music.play(-1, fade_ms=500)
+        pygame.mixer.music.play(-1) # -1 sürekli döngüde çalmasını sağlar
 
     state = "FIRST_HALF"
 
@@ -725,15 +665,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r: 
-                toggle_recording()
-            if event.key == pygame.K_p: 
-                paused = not paused
+            if event.key == pygame.K_p: paused = not paused
 
         if state == "MENU":
-            list_start_y = 120
             visible_h = HEIGHT - 220
             total_items_h = len(TEAM_NAMES) * 40
             max_scroll = total_items_h - visible_h
@@ -742,18 +677,15 @@ while running:
             scrollbar_x = WIDTH - 20
             scrollbar_y_start = 120
             scrollbar_h_total = visible_h
-            if total_items_h > 0:
-                handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
-            else:
-                handle_h = scrollbar_h_total
+            if total_items_h > 0: handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
+            else: handle_h = scrollbar_h_total
             if max_scroll > 0:
                 scroll_ratio = abs(menu_scroll_y) / max_scroll
                 handle_y = scrollbar_y_start + scroll_ratio * (scrollbar_h_total - handle_h)
-            else:
-                handle_y = scrollbar_y_start
+            else: handle_y = scrollbar_y_start
+
             scrollbar_rect = pygame.Rect(scrollbar_x, scrollbar_y_start, scrollbar_w, scrollbar_h_total)
             handle_rect = pygame.Rect(scrollbar_x, handle_y, scrollbar_w, handle_h)
-
             start_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -765,17 +697,11 @@ while running:
                     item_y = 120 + i * 40 + menu_scroll_y
                     if item_y > 100 and item_y < HEIGHT - 110:
                         rect = pygame.Rect(50, item_y, 200, 30)
-                        if rect.collidepoint(mx, my):
-                            selected_home_idx = i
-                for i, name in enumerate(TEAM_NAMES):
-                    item_y = 120 + i * 40 + menu_scroll_y
-                    if item_y > 100 and item_y < HEIGHT - 110:
-                        rect = pygame.Rect(350, item_y, 200, 30)
-                        if rect.collidepoint(mx, my):
-                            selected_away_idx = i
+                        if rect.collidepoint(mx, my): selected_home_idx = i
+                        rect2 = pygame.Rect(350, item_y, 200, 30)
+                        if rect2.collidepoint(mx, my): selected_away_idx = i
 
-                if start_btn_rect.collidepoint(mx, my):
-                    start_match()
+                if start_btn_rect.collidepoint(mx, my): start_match()
             elif event.type == pygame.MOUSEBUTTONUP:
                 is_dragging_scroll = False
             elif event.type == pygame.MOUSEMOTION:
@@ -793,15 +719,17 @@ while running:
                 if menu_scroll_y < -max_scroll: menu_scroll_y = -max_scroll
 
         elif state == "FULLTIME":
-            if end_match_timer > 2 * FPS: 
-                # UPDATED: Button Y position lowered from 150 to 80 (relative to bottom)
-                restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 80, 300, 60)
+            if end_match_timer > 2 * FPS:
+                restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mx, my = pygame.mouse.get_pos()
                     if restart_btn_rect.collidepoint(mx, my):
                         state = "MENU"
                         goal_angle = 1 * math.pi / 2
                         if goal_sound_channel: goal_sound_channel.stop()
+                        # MENÜYE DÖNÜNCE STADYUM SESİNİ DURDUR
+                        if stadium_music_loaded:
+                            pygame.mixer.music.stop()
 
     if not paused:
         if state == "MENU":
@@ -816,8 +744,7 @@ while running:
             screen.set_clip(clip_rect)
             for i, name in enumerate(TEAM_NAMES):
                 item_y = 120 + i * 40 + menu_scroll_y
-                if item_y < 100 or item_y > HEIGHT - 100:
-                    continue
+                if item_y < 100 or item_y > HEIGHT - 100: continue
                 col = SELECTED_COLOR if i == selected_home_idx else WHITE
                 name_surf = font_menu_item.render(name, True, col)
                 screen.blit(name_surf, (50, item_y))
@@ -827,13 +754,11 @@ while running:
             screen.set_clip(None)
             pygame.draw.rect(screen, SCROLLBAR_BG, scrollbar_rect)
             pygame.draw.rect(screen, SCROLLBAR_HANDLE, handle_rect, border_radius=5)
-
             pygame.draw.rect(screen, MENU_BG, (0, HEIGHT-110, WIDTH, 110))
 
             btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
             pygame.draw.rect(screen, GRASS_1, btn_rect, border_radius=15)
             pygame.draw.rect(screen, WHITE, btn_rect, 3, border_radius=15)
-
             btn_txt = font_menu_title.render("MAÇI BAŞLAT", True, WHITE)
             btn_txt_rect = btn_txt.get_rect(center=btn_rect.center)
             screen.blit(btn_txt, btn_txt_rect)
@@ -844,25 +769,23 @@ while running:
                 total_mins_played = frame_counter // FRAMES_PER_SIM_MINUTE
                 if state == "FIRST_HALF":
                     sim_minute = total_mins_played
-                    
                     if not red_card_spawned_this_half and not red_card_obj:
-                        if random.random() < 0.05 / (45 * 60) * 10: 
+                        if random.random() < 0.05 / (45 * 60) * 10:
                             red_card_obj = RedCard(center_x, center_y)
                             red_card_spawned_this_half = True
-                    
+
                     if sim_minute >= 45:
                         display_added_time = True
                         if sim_minute >= 45 + added_time_1:
                             state = "HALFTIME"
                             halftime_timer = 0
-                            red_card_obj = None 
+                            red_card_obj = None
                     else:
                         display_added_time = False
                 elif state == "SECOND_HALF":
                     sim_minute = 45 + total_mins_played
-
                     if not red_card_spawned_this_half and not red_card_obj:
-                        if random.random() < 0.2 / (45 * 60) * 10: 
+                        if random.random() < 0.2 / (45 * 60) * 10:
                             red_card_obj = RedCard(center_x, center_y)
                             red_card_spawned_this_half = True
 
@@ -883,22 +806,17 @@ while running:
                     goal_angle = (goal_angle + goal_rot_speed) % (2 * math.pi)
                 if goll_timer > 0:
                     goll_timer -= 1
-                
+
                 if red_card_obj:
                     red_card_obj.update()
-                    if not red_card_obj.active:
-                        red_card_obj = None 
+                    if not red_card_obj.active: red_card_obj = None
                     else:
                         for b in [ball1, ball2]:
                             if red_card_obj.check_collision(b):
                                 b.nerf_timer = 20 * FRAMES_PER_SIM_MINUTE
-                                
                                 time_mark = f"{sim_minute}'"
-                                if b == ball1:
-                                    goal_events_1.append((time_mark, "RED_CARD", "", frame_counter, state))
-                                else:
-                                    goal_events_2.append((time_mark, "RED_CARD", "", frame_counter, state))
-                                
+                                if b == ball1: goal_events_1.append((time_mark, "RED_CARD", "", frame_counter, state))
+                                else: goal_events_2.append((time_mark, "RED_CARD", "", frame_counter, state))
                                 red_card_obj = None
                                 break
 
@@ -908,13 +826,11 @@ while running:
                     b.collide_post(p1[0], p1[1])
                     b.collide_post(p2[0], p2[1])
                 for _ in range(8):
-                    if ball1.collide_wall(center_x, center_y, ARENA_RADIUS):
-                        play_collision_sound()
-                    if ball2.collide_wall(center_x, center_y, ARENA_RADIUS):
-                        play_collision_sound()
-                    if resolve_collisions(ball1, ball2):
-                        play_collision_sound()
-                        
+                    if ball1.collide_wall(center_x, center_y, ARENA_RADIUS): play_collision_sound()
+                    if ball2.collide_wall(center_x, center_y, ARENA_RADIUS): play_collision_sound()
+                    if resolve_collisions(ball1, ball2): play_collision_sound()
+
+                # GOL KONTROLÜ
                 for b in [ball1, ball2]:
                     dist = math.hypot(b.x - center_x, b.y - center_y)
                     if dist > ARENA_RADIUS - b.radius - 5:
@@ -925,23 +841,24 @@ while running:
                         while diff > math.pi: diff = abs(diff - 2*math.pi)
                         if diff < GOAL_WIDTH_RADIANS / 2:
                             goll_timer = 90
+                            screen_shake_timer = 30
+
                             time_mark = f"{sim_minute}'"
                             if state == "FIRST_HALF":
-                                if sim_minute > 45:
-                                    time_mark = f"45+{sim_minute - 45}'"
+                                if sim_minute > 45: time_mark = f"45+{sim_minute - 45}'"
                             elif state == "SECOND_HALF":
-                                if sim_minute > 90:
-                                    time_mark = f"90+{sim_minute - 90}'"
+                                if sim_minute > 90: time_mark = f"90+{sim_minute - 90}'"
+
                             if b == ball1:
                                 score1 += 1
-                                goal_text_color = team1_colors[0] 
+                                goal_text_color = team1_colors[0]
                                 scorer_name = get_random_player_name(TEAM_NAMES[selected_home_idx])
                                 goal_events_1.append((time_mark, "GOAL", scorer_name, frame_counter, state))
                                 ball1.x, ball1.y = center_x, center_y
                                 play_goal_music_for_team(team1_name)
                             else:
                                 score2 += 1
-                                goal_text_color = team2_colors[0] 
+                                goal_text_color = team2_colors[0]
                                 scorer_name = get_random_player_name(TEAM_NAMES[selected_away_idx])
                                 goal_events_2.append((time_mark, "GOAL", scorer_name, frame_counter, state))
                                 ball2.x, ball2.y = center_x, center_y
@@ -955,11 +872,10 @@ while running:
 
             if state == "HALFTIME":
                 halftime_timer += 1
-                # UPDATED: Reduced halftime interval to 1.5 seconds
-                if halftime_timer > 1.5 * FPS: 
+                if halftime_timer > 1.5 * FPS:
                     state = "SECOND_HALF"
                     frame_counter = 0
-                    red_card_spawned_this_half = False 
+                    red_card_spawned_this_half = False
                     red_card_obj = None
                     display_added_time = False
                     rx1, ry1 = get_random_spawn(center_x, center_y, ARENA_RADIUS)
@@ -969,104 +885,69 @@ while running:
 
             for p in particles[:]:
                 p.update()
-                if p.life <= 0:
-                    particles.remove(p)
+                if p.life <= 0: particles.remove(p)
 
             screen.fill(BLACK)
             for dot in crowd:
                 pygame.draw.circle(screen, dot[2], (dot[0], dot[1]), 2)
             draw_striped_pitch(screen, center_x, center_y, ARENA_RADIUS)
             draw_real_goal(screen, center_x, center_y, ARENA_RADIUS, goal_angle, GOAL_WIDTH_RADIANS)
-            
-            if red_card_obj:
-                red_card_obj.draw(screen)
+
+            if red_card_obj: red_card_obj.draw(screen)
 
             ball1.draw(screen)
             ball2.draw(screen)
 
-            for p in particles:
-                p.draw(screen)
+            for p in particles: p.draw(screen)
 
             draw_cinematic_vignette(screen)
 
-            # --- UPDATED: SPLIT SCOREBOARD BACKGROUND ---
-          # --- UPDATED: INTELLIGENT COLOR SCOREBOARD ---
-            panel_w, panel_h = 500, 105 
+            panel_w, panel_h = 500, 105
             panel_x = WIDTH // 2 - panel_w // 2
-            
             table_surf = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
-            
-            # Matte Grey Background
             pygame.draw.rect(table_surf, (60, 60, 60, 240), (0, 0, panel_w, panel_h), border_radius=15)
-            
             screen.blit(table_surf, (panel_x, 20))
-            
-            # Border
             pygame.draw.rect(screen, WHITE, (panel_x, 20, panel_w, panel_h), 2, border_radius=15)
-            
+
             align_y = 72
-            
-            # --- COLOR VISIBILITY LOGIC ---
-            # Helper to check if color is too bright (luminance)
-            # Standard formula: 0.299*R + 0.587*G + 0.114*B
             def get_readable_color(colors):
-                c = colors[1] # Try secondary color first
+                c = colors[1]
                 lum = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
-                if lum > 190: # If brightness > 190 (too close to white)
-                    return colors[0] # Switch to primary color
+                if lum > 190: return colors[0]
                 return colors[1]
 
             t1_txt_col = get_readable_color(team1_colors)
             t2_txt_col = get_readable_color(team2_colors)
 
-            # Team Names (White Outline, Dynamic Text Color)
             draw_text_with_outline(screen, TEAMS[TEAM_NAMES[selected_home_idx]]["short"], font_team, t1_txt_col, panel_x + 30, align_y - 30, "left", outline_col=WHITE)
             draw_text_with_outline(screen, TEAMS[TEAM_NAMES[selected_away_idx]]["short"], font_team, t2_txt_col, panel_x + panel_w - 30, align_y - 30, "right", outline_col=WHITE)
-            
-            # Scores (White Outline, Dynamic Text Color)
+
             center_score_x = WIDTH // 2
             draw_text_with_outline(screen, str(score1), font_score, t1_txt_col, center_score_x - 50, align_y, outline_col=WHITE)
-            # Dash (Kept same: Black text, White outline)
             draw_text_with_outline(screen, "-", font_score, BLACK, center_score_x, align_y, outline_col=WHITE)
             draw_text_with_outline(screen, str(score2), font_score, t2_txt_col, center_score_x + 50, align_y, outline_col=WHITE)
 
-            # Time Display (Kept same: Black text, White outline)
             time_str = ""
             if state == "FIRST_HALF":
-                if display_added_time:
-                    time_str = f"45+{sim_minute - 45}'"
-                else:
-                    time_str = f"{sim_minute}'"
-            elif state == "HALFTIME":
-                time_str = "İY"
+                if display_added_time: time_str = f"45+{sim_minute - 45}'"
+                else: time_str = f"{sim_minute}'"
+            elif state == "HALFTIME": time_str = "İY"
             elif state == "SECOND_HALF":
-                if display_added_time:
-                    time_str = f"90+{sim_minute - 90}'"
-                else:
-                    time_str = f"{sim_minute}'"
-            elif state == "FULLTIME":
-                time_str = "MS"
-            
-            # Draw time with white outline
+                if display_added_time: time_str = f"90+{sim_minute - 90}'"
+                else: time_str = f"{sim_minute}'"
+            elif state == "FULLTIME": time_str = "MS"
+
             draw_text_with_outline(screen, time_str, font_timer, BLACK, WIDTH//2, 102, outline_col=WHITE)
-            
-            # Draw time with white outline
-            draw_text_with_outline(screen, time_str, font_timer, BLACK, WIDTH//2, 102, outline_col=WHITE)
-            # Draw time with white outline
-            draw_text_with_outline(screen, time_str, font_timer, BLACK, WIDTH//2, 102, outline_col=WHITE)
-            
+
             notif_duration = 200
-            active_notif = None
-            
             def draw_event_list(events_list, x_pos, team_color, align_right=False):
                 y_off = 130
                 recent_event = None
                 visible_events = events_list[-5:]
-                
                 for event_data in visible_events:
                     t_str, e_type, scorer, ev_frame, ev_state = event_data
                     is_new = (ev_state == state) and (0 <= (frame_counter - ev_frame) < notif_duration)
-                    
+
                     if is_new:
                         if e_type == "GOAL":
                             txt = f"GOLLL! {scorer} ({t_str})"
@@ -1075,46 +956,33 @@ while running:
                             txt = f"Kırmızı Kart! ({t_str})"
                             col = RED_CARD_COLOR
                         recent_event = (txt, col)
-                        continue 
+                        continue
 
-                    if e_type == "GOAL":
-                        display_str = f"{t_str} {scorer}"
-                    else:
-                        display_str = t_str
-
+                    display_str = f"{t_str} {scorer}" if e_type == "GOAL" else t_str
                     t_surf = font_goal_list.render(display_str, True, WHITE)
-                    
                     draw_x = x_pos
-                    if align_right:
-                        draw_x = x_pos - t_surf.get_width()
-                    
+                    if align_right: draw_x = x_pos - t_surf.get_width()
                     screen.blit(t_surf, (draw_x, y_off))
-                    
+
                     if e_type == "RED_CARD":
                         rc_rect = pygame.Rect(draw_x + t_surf.get_width() + 5, y_off + 2, 10, 14)
-                        if align_right: 
-                            rc_rect.x = draw_x - 15
+                        if align_right: rc_rect.x = draw_x - 15
                         pygame.draw.rect(screen, RED_CARD_COLOR, rc_rect)
                         pygame.draw.rect(screen, WHITE, rc_rect, 1)
-                    
+
                     y_off += 20
-                
                 return recent_event
 
             recent1 = draw_event_list(goal_events_1, panel_x + 20, team1_colors[0], align_right=False)
             recent2 = draw_event_list(goal_events_2, panel_x + panel_w - 20, team2_colors[0], align_right=True)
-            
+
             notif_y = 150
-            
             def draw_big_notif(txt, col, y):
                 draw_text_with_outline(screen, txt, font_notification, col, WIDTH//2, y + 20)
                 return y + 40
 
-            if recent1:
-                notif_y = draw_big_notif(recent1[0], recent1[1], notif_y)
-                
-            if recent2:
-                notif_y = draw_big_notif(recent2[0], recent2[1], notif_y)
+            if recent1: notif_y = draw_big_notif(recent1[0], recent1[1], notif_y)
+            if recent2: notif_y = draw_big_notif(recent2[0], recent2[1], notif_y)
 
             if goll_timer > 0:
                 goll_surf = font_goll_msg.render("GOLLL!", True, goal_text_color)
@@ -1123,39 +991,30 @@ while running:
                 screen.blit(outline_surf, (gx+4, gy+4))
                 screen.blit(goll_surf, (gx, gy))
 
-            # UPDATED: Center text now uses White text with Black Outline
             if state == "HALFTIME":
                 draw_text_with_outline(screen, "İlk Yarı", font_event, WHITE, center_x, center_y, outline_col=BLACK)
-
             elif state == "FULLTIME":
                 end_match_timer += 1
                 draw_text_with_outline(screen, "Maç Sonu", font_event, WHITE, center_x, center_y, outline_col=BLACK)
-
                 if end_match_timer > 2 * FPS:
-                    # UPDATED: Button Y position lowered
-                    restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 80, 300, 60)
+                    restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
                     pygame.draw.rect(screen, GRASS_1, restart_btn_rect, border_radius=15)
                     pygame.draw.rect(screen, WHITE, restart_btn_rect, 3, border_radius=15)
-
                     restart_txt = font_menu_title.render("MENÜYE DÖN", True, WHITE)
                     restart_txt_rect = restart_txt.get_rect(center=restart_btn_rect.center)
                     screen.blit(restart_txt, restart_txt_rect)
 
-    if VIDEO_AVAILABLE and is_recording:
-        pygame.draw.circle(screen, (255, 0, 0), (WIDTH - 30, 30), 10)
-        rec_text = font_small.render("REC", True, WHITE)
-        screen.blit(rec_text, (WIDTH - 55 - rec_text.get_width(), 22))
+        shake_x, shake_y = 0, 0
+        if screen_shake_timer > 0:
+            shake_intensity = int((screen_shake_timer / 30) * 12)
+            shake_x = random.randint(-shake_intensity, shake_intensity)
+            shake_y = random.randint(-shake_intensity, shake_intensity)
+            screen_shake_timer -= 1
 
-        frame_data = pygame.surfarray.array3d(screen)
-        frame_data = frame_data.transpose([1, 0, 2])
-        frame_bgr = cv2.cvtColor(frame_data, cv2.COLOR_RGB2BGR)
-        video_writer.write(frame_bgr)
+        main_screen.fill(BLACK)
+        main_screen.blit(screen, (shake_x, shake_y))
 
     pygame.display.flip()
     clock.tick(FPS)
-
-if VIDEO_AVAILABLE and is_recording and video_writer:
-    video_writer.release()
-    print("Recording saved on exit.")
 
 pygame.quit()
