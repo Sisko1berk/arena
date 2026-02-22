@@ -1,9 +1,9 @@
 GALATASARAY: Osimhen, Icardi, Leroy Sané, Barış Alper, Gabriel Sara
 FENERBAHÇE: Kerem Aktürkoğlu, Talisca, Marco Asensio, Milan Škriniar, Talisca, Talisca, Marco Asensio, Sidiki Chérif, Kerem Aktürkoğlu, İsmail Yüksek
-BEŞİKTAŞ: Vaclav Cerny, Orkun Kökçü, Cengiz Ünder, Hyeon-gyu Oh, Tammy Abraham
+BEŞİKTAŞ: Vaclav Cerny, Orkun Kökçü, Cengiz Ünder, Hyeon-gyu Oh
 TRABZONSPOR: Paul Onuachu, Anthony Nwakaeme, Oleksandr Zubkov, Felipe Augusto, Ozan Tufan
 BAŞAKŞEHİR: Eldor Shomurodov, Piatek, Deniz Türüç, Serdar Gürler, Kemen
-KASIMPAŞA: Adrian Benedyczak, Aytaç Kara, Nuno Da Costa, Brekalo, Fall
+KASIMPAŞA: İrfan Can Kahveci, Cenk Tosun, Kerem Demirbay
 SİVASSPOR: Rey Manaj, Koita, Pritchard, Garry Rodrigues, Turgunboev
 ALANYASPOR: Sergio Cordova, Efecan Karaca, Güven Yalçın, Janvier, Augusto
 RİZESPOR: Ali Sowe, Olawoyin, Akintola, Varesanovic, Hadziahmetovic
@@ -13,8 +13,12 @@ KONYASPOR: Kramer, Aleksic, Pedrinho, Yusuf Erdoğan, Ndao
 KAYSERİSPOR: Duckens Nazon, Boa Morte, Cardoso, Mane, Bourabia
 BODRUM FK: Puşcaş, Gökdeniz Bayrakdar, Seferi, Fredy, Taylan Antalyalı
 EYÜPSPOR: Mame Thiam, Ahmed Kutucu, Samu Saiz, Emre Akbaba, Midtsjo
-GÖZTEPE: Romulo, Juan Santos, Doğan Erdoğan, Tijanic, Matsuki
-SAMSUNSPOR: Marius Mouandilmadji, Holse, Ntcham, Muja, Emre Kılınç
+GÖZTEPE: Juan Santos, Janderson, Arda Kurtulan
+KOCAELİ: Saffet Sancaklı, Kaan Dobra, Serdar Topraktepe
+KAYSERİ: Gökhan Ünal, Ariza Makukula, Mame Thiam
+KARAGÜMRÜK: Fabio Borini, Mbaye Diagne, Aleksandar Pesic
+GENÇLERBİRLİĞİ: Bogdan Stancu, Souleymane Youla, Andre Kona
+SAMSUNSPOR: Marius Mouandilmadji, Cheriff Ndiaye, Emre Kılınç, Carlo Holse, Carlo Holse, Carlo Holse
 HATAYSPOR: Strandberg, Dele-Bashiru, Rivas, Joelson Fernandes, Görkem Sağlam
 ADANA DEMİR: Abat Aybetov, Yusuf Sarı, Tayfun Aydoğan, Maestro, Alioui
 MAN CITY: Haaland, Phil Foden, Antoine Semenyo, Marc Guehi, Savinho
@@ -29,9 +33,9 @@ BARCELONA: Lewandowski, Lamine Yamal, Ferran Torres, Raphinha, Dani Olmo
 ATLETICO: Julian Alvarez, Griezmann, Alexander Sorloth, Rodrigo De Paul, Gallagher
 GIRONA: Miovski, Bryan Gil, Danjuma, Asprilla, Van de Beek
 B. MUNIH: Harry Kane, Jamal Musiala, Michael Olise, Leroy Sane, Serge Gnabry
-DORTMUND: Serhou Guirassy, Julian Brandt, Jamie Gittens, Sabitzer, Malen
+DORTMUND: Serhou Guirassy, Julian Brandt, Adeyemi
 LEVERKUSEN:Aleix Garcia, İbrahim Maza, Patrik Schick, Terrier, Malik Tillman
-RB LEIPZIG: Lois Openda, Benjamin Sesko, Xavi Simons, Nusa, Baumgartner
+RB LEIPZIG: Yann Diomande, Nusa, Romulo
 INTER: Lautaro Martinez, Marcus Thuram, Hakan Çalhanoğlu, Barella, Zielinski
 MILAN: Rafael Leao, Morata, Christian Pulisic, Reijnders, Loftus-Cheek
 JUVENTUS: Vlahovic, Kenan Yıldız, Teun Koopmeiners, Nico Gonzalez, Douglas Luiz
