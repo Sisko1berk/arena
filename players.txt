@@ -30,11 +30,11 @@ MAN UTD: Bruno Fernandes, Rashford, Hojlund, Garnacho, Mainoo
 CHELSEA: Cole Palmer, João Pedro, Nicolas Jackson, Joao Felix, Nkunku
 REAL MADRID: Mbappé, Vinicius Jr, Jude Bellingham, Rodrygo, Arda Güler
 BARCELONA: Lewandowski, Lamine Yamal, Ferran Torres, Raphinha, Dani Olmo
-ATLETICO: Julian Alvarez, Griezmann, Alexander Sorloth, Rodrigo De Paul, Gallagher
+ATLETICO: Julian Alvarez, Griezmann, Alexander Sorloth
 GIRONA: Miovski, Bryan Gil, Danjuma, Asprilla, Van de Beek
 B. MUNIH: Harry Kane, Jamal Musiala, Michael Olise, Leroy Sane, Serge Gnabry
 DORTMUND: Serhou Guirassy, Julian Brandt, Adeyemi
-LEVERKUSEN:Aleix Garcia, İbrahim Maza, Patrik Schick, Terrier, Malik Tillman
+LEVERKUSEN:Aleix Garcia, İbrahim Maza, Patrik Schick, Malik Tillman
 RB LEIPZIG: Yann Diomande, Nusa, Romulo
 INTER: Lautaro Martinez, Marcus Thuram, Hakan Çalhanoğlu, Barella, Zielinski
 MILAN: Rafael Leao, Morata, Christian Pulisic, Reijnders, Loftus-Cheek
@@ -65,10 +65,10 @@ FERENCVAROS: Varga, Traoré, Zachariassen
 CRVENA ZVEZDA: Katai, Bukari, Dragović
 CELTIC: McGregor, Furuhashi, O'Riley
 STUTTGART: Undav, Führich, Millot
-CLUB BRUGGE: Skov Olsen, Tzolis, Vanaken, Nilsson, Vermant
+CLUB BRUGGE: Tzolis, Vanaken, Tresoldi, Forbs
 NEWCASTLE: Harvey Barnes, Anthony Gordon, Yoane Wissa, Jacob Murphy
 QARABAG: Camilo Duràn, Musa Qurbanlı, Kady Borges, Leandro Andrade
-OLYMPIACOS: El Kaabi, Mehdi Taremi,  Gelson Martins, Chiquinho
+OLYMPIACOS: El Kaabi, Mehdi Taremi,  Gelson Martins, Chiquinho, Podence
 BODO/GLIMT: Hauge, Evjen, Bjørkan, Berg, Høgh
 
 

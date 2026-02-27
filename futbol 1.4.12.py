@@ -9,15 +9,14 @@ WIDTH, HEIGHT = 800, 800
 FPS = 80
 FRAMES_PER_SIM_MINUTE = 26
 
-ARENA_RADIUS = 240 
+ARENA_RADIUS = 240
 BALL_RADIUS = 37
 GOAL_WIDTH_RADIANS = 0.32
 POST_RADIUS = 7
 GOAL_DEPTH = 52
 
 SPEED = 5.5
-MIN_SPEED = 3.9
-
+MIN_SPEED = 4.0
 
 # PHYSICS CONSTANTS
 GRAVITY = 0.025
@@ -33,20 +32,25 @@ WHITE = (245, 245, 245)
 BLACK = (10, 10, 10)
 NET_COLOR = (200, 200, 200)
 GOLD = (255, 215, 0)
-MENU_BG = (80, 80, 80) # Matched to TABLE_BG base
+MENU_BG = (25, 25, 25) # Darkened from (80, 80, 80)
 SELECTED_COLOR = (50, 255, 50)
 SCROLLBAR_BG = (50, 50, 60)
 SCROLLBAR_HANDLE = (150, 150, 150)
 RED_CARD_COLOR = (250, 10, 10)
 OVERLAY_BG = (20, 20, 20, 200)
-TABLE_BG = (80, 80, 80, 230)
+TABLE_BG = (35, 35, 35, 230) # Darkened
 POST_INNER_COLOR = (50, 50, 50)
 SHADOW_COLOR = (0, 0, 0, 80)
 
 # --- SES AYARLARI ---
 STADIUM_SOUND = "stadium.mp3"
 COLLISION_FILE = "collision1.wav"
-RED_CARD_FILE = "whistle.wav"
+
+# DÜDÜK DOSYALARI
+START_WHISTLE_FILE = "baş.mp3"
+HALF_WHISTLE_FILE = "orta.mp3"
+END_WHISTLE_FILE = "son.mp3"
+RED_CARD_FILE = "baş.mp3" # KIRMIZI KART SESİ GERİ EKLENDİ
 
 GS_GOAL_FILE = "gs.wav"
 FB_GOAL_FILE = "fb.wav"
@@ -183,8 +187,13 @@ def apply_volumes():
         pygame.mixer.music.set_volume(vol_settings["stadium"] * master_vol)
     if collision_sound:
         collision_sound.set_volume(vol_settings["collision"] * master_vol)
-    if red_card_sound:
-        red_card_sound.set_volume(vol_settings["whistle"] * master_vol)
+
+    whistle_vol = vol_settings["whistle"] * master_vol
+    if start_whistle_sound: start_whistle_sound.set_volume(whistle_vol)
+    if half_whistle_sound: half_whistle_sound.set_volume(whistle_vol)
+    if end_whistle_sound: end_whistle_sound.set_volume(whistle_vol)
+    if red_card_sound: red_card_sound.set_volume(whistle_vol) # Kırmızı kart ses düzeyi uygulandı
+
     for snd in goal_sounds.values():
         if snd: snd.set_volume(vol_settings["music"] * master_vol)
 
@@ -198,6 +207,21 @@ if os.path.exists(STADIUM_SOUND):
 collision_sound = None
 if os.path.exists(COLLISION_FILE):
     try: collision_sound = pygame.mixer.Sound(COLLISION_FILE)
+    except: pass
+
+start_whistle_sound = None
+if os.path.exists(START_WHISTLE_FILE):
+    try: start_whistle_sound = pygame.mixer.Sound(START_WHISTLE_FILE)
+    except: pass
+
+half_whistle_sound = None
+if os.path.exists(HALF_WHISTLE_FILE):
+    try: half_whistle_sound = pygame.mixer.Sound(HALF_WHISTLE_FILE)
+    except: pass
+
+end_whistle_sound = None
+if os.path.exists(END_WHISTLE_FILE):
+    try: end_whistle_sound = pygame.mixer.Sound(END_WHISTLE_FILE)
     except: pass
 
 red_card_sound = None
@@ -239,7 +263,7 @@ font_score = pygame.font.SysFont("impact", 54)
 font_timer = pygame.font.SysFont("impact", 26)
 font_event = pygame.font.SysFont("impact", 50)
 font_team = pygame.font.SysFont("impact", 48)
-font_goal_list = pygame.font.SysFont("impact", 14)
+font_goal_list = pygame.font.SysFont("impact", 20)
 font_goll_msg = pygame.font.SysFont("impact", 90)
 font_menu_title = pygame.font.SysFont("impact", 40)
 font_menu_item = pygame.font.SysFont("impact", 20)
@@ -252,53 +276,45 @@ def draw_cinematic_vignette(surface):
     pygame.draw.rect(surface, (0,0,0), (0,0,WIDTH,HEIGHT), 20)
 
 def draw_striped_pitch(surface, cx, cy, radius):
-    # Base grass circle
     pygame.draw.circle(surface, GRASS_1, (cx, cy), radius)
     stripe_surf = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
     for i in range(0, radius*2, 60):
         pygame.draw.rect(stripe_surf, GRASS_2, (0, i, radius*2, 30))
     mask_surf = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
     pygame.draw.circle(mask_surf, (255, 255, 255, 255), (radius, radius), radius)
-    
-    # Anti-alias the edge of the grass mask itself
+
     pygame.gfxdraw.aacircle(mask_surf, radius, radius, radius, (255, 255, 255, 255))
-    
+
     stripe_surf.blit(mask_surf, (0,0), special_flags=pygame.BLEND_RGBA_MIN)
     surface.blit(stripe_surf, (cx - radius, cy - radius))
 
-    # Rainbow border (Solid 6px core + smooth AA edges)
     for angle in range(0, 360):
         rad_start = math.radians(angle)
         rad_end = math.radians(angle + 1.5)
         color = pygame.Color(0)
         color.hsla = (angle % 360, 100, 50, 100)
-        
-        # Core thick line
+
         start_pos = (cx + math.cos(rad_start) * radius, cy + math.sin(rad_start) * radius)
         end_pos = (cx + math.cos(rad_end) * radius, cy + math.sin(rad_end) * radius)
         pygame.draw.line(surface, color, start_pos, end_pos, 6)
-        
-        # Outer smooth edge
+
         out_s = (cx + math.cos(rad_start) * (radius + 3), cy + math.sin(rad_start) * (radius + 3))
         out_e = (cx + math.cos(rad_end) * (radius + 3), cy + math.sin(rad_end) * (radius + 3))
         pygame.draw.aaline(surface, color, out_s, out_e)
-        
-        # Inner smooth edge
+
         in_s = (cx + math.cos(rad_start) * (radius - 3), cy + math.sin(rad_start) * (radius - 3))
         in_e = (cx + math.cos(rad_end) * (radius - 3), cy + math.sin(rad_end) * (radius - 3))
         pygame.draw.aaline(surface, color, in_s, in_e)
 
-    # Smooth center line (Solid 4px core + AA top/bottom edges)
     line_start = (cx - radius + 20, cy)
     line_end = (cx + radius - 20, cy)
     pygame.draw.line(surface, WHITE, line_start, line_end, 4)
     pygame.draw.aaline(surface, WHITE, (line_start[0], cy - 2), (line_end[0], cy - 2))
     pygame.draw.aaline(surface, WHITE, (line_start[0], cy + 1), (line_end[0], cy + 1))
 
-    # Smooth center circle (Solid 4px core + AA inner/outer edges)
     pygame.draw.circle(surface, WHITE, (cx, cy), 50, 4)
-    pygame.gfxdraw.aacircle(surface, cx, cy, 50, WHITE) # Outer smooth edge
-    pygame.gfxdraw.aacircle(surface, cx, cy, 47, WHITE) # Inner smooth edge
+    pygame.gfxdraw.aacircle(surface, cx, cy, 50, WHITE)
+    pygame.gfxdraw.aacircle(surface, cx, cy, 47, WHITE)
 
 def calculate_goal_posts(cx, cy, radius, angle, width_rad):
     start_angle = angle - width_rad / 2
@@ -331,12 +347,12 @@ def draw_real_goal(surface, cx, cy, radius, angle, width_rad):
         pygame.draw.aaline(surface, NET_COLOR, (lx3, ly3), (lx4, ly4))
 
     pygame.draw.lines(surface, WHITE, False, [(p1x, p1y), (b1x, b1y), (b2x, b2y), (p2x, p2y)], 3)
-    
+
     pygame.gfxdraw.aacircle(surface, int(p1x), int(p1y), POST_RADIUS, WHITE)
     pygame.gfxdraw.filled_circle(surface, int(p1x), int(p1y), POST_RADIUS, WHITE)
     pygame.gfxdraw.aacircle(surface, int(p2x), int(p2y), POST_RADIUS, WHITE)
     pygame.gfxdraw.filled_circle(surface, int(p2x), int(p2y), POST_RADIUS, WHITE)
-    
+
     pygame.gfxdraw.aacircle(surface, int(p1x), int(p1y), POST_RADIUS-2, POST_INNER_COLOR)
     pygame.gfxdraw.filled_circle(surface, int(p1x), int(p1y), POST_RADIUS-2, POST_INNER_COLOR)
     pygame.gfxdraw.aacircle(surface, int(p2x), int(p2y), POST_RADIUS-2, POST_INNER_COLOR)
@@ -451,29 +467,24 @@ class Ball:
         pygame.draw.circle(shadow_surf, SHADOW_COLOR, (self.radius, self.radius), self.radius - 2)
         surface.blit(shadow_surf, (int(self.x) - self.radius + self.shadow_offset, int(self.y) - self.radius + self.shadow_offset))
 
-        # --- HIGH-RES SUPERSAMPLING FOR PERFECTLY SMOOTH BALL ---
         scale = 3
         sr = self.radius * scale
         hr_surf = pygame.Surface((sr * 2, sr * 2), pygame.SRCALPHA)
-        
-        # Draw high-res base circle
-        pygame.draw.circle(hr_surf, self.color[0], (sr, sr), sr)
-        
-        # Draw high-res right half
-        half_rect = pygame.Rect(sr, 0, sr, sr * 2)
-        pygame.draw.rect(hr_surf, self.color[1], half_rect)
-        
-        # Apply high-res mask for perfect edges
+
+        stripe_w = (sr * 2) / 6
+        for i in range(6):
+            c = self.color[0] if i % 2 == 0 else self.color[1]
+            stripe_rect = pygame.Rect(i * stripe_w, 0, stripe_w + 1.5, sr * 2)
+            pygame.draw.rect(hr_surf, c, stripe_rect)
+
         mask_surf = pygame.Surface((sr * 2, sr * 2), pygame.SRCALPHA)
         pygame.draw.circle(mask_surf, (255, 255, 255), (sr, sr), sr)
         hr_surf.blit(mask_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
-        
-        # Draw high-res outer white border
+
         pygame.draw.circle(hr_surf, WHITE, (sr, sr), sr, 4 * scale)
-        
-        # Smoothly scale it back down to regular size
+
         ball_surf = pygame.transform.smoothscale(hr_surf, (self.radius * 2, self.radius * 2))
-        
+
         surface.blit(ball_surf, (int(self.x) - self.radius, int(self.y) - self.radius))
 
         if self.nerf_timer > 0:
@@ -486,16 +497,15 @@ class Ball:
         if dist + self.radius >= radius:
             nx, ny = dx / dist, dy / dist
             dot = self.vx * nx + self.vy * ny
-            
-            # --- CRITICAL HIT CALCULATION ---
+
             is_crit = random.random() < 0.15
             current_bounce = 1.05 if is_crit else BOUNCE_DAMPING
-            particle_count = 7 if is_crit else 6  # ~30% increase in particles
-            
+            particle_count = 7 if is_crit else 6
+
             if dot > 0:
                 self.vx = (self.vx - 2 * dot * nx) * current_bounce
                 self.vy = (self.vy - 2 * dot * ny) * current_bounce
-                
+
             overlap = (dist + self.radius) - radius
             self.x -= nx * overlap
             self.y -= ny * overlap
@@ -503,10 +513,9 @@ class Ball:
             hit_x = self.x + nx * self.radius
             hit_y = self.y + ny * self.radius
             p_color = random.choice(self.color)
-            
+
             for _ in range(particle_count):
                 p = Particle(hit_x, hit_y, p_color)
-                # Adding a little extra speed to the particles on a crit so it feels more explosive
                 p.vx += nx * (4 if is_crit else 2)
                 p.vy += ny * (4 if is_crit else 2)
                 particles.append(p)
@@ -610,7 +619,7 @@ class RedCard:
         dist_sq = dx*dx + dy*dy
         if dist_sq < ball.radius**2:
             self.active = False
-            play_red_card_sound()
+            play_red_card_sound() # KIRMIZI KART SESİ BURADA ÇALIYOR
             return True
         return False
 
@@ -634,7 +643,7 @@ added_time_2 = random.randint(1, 2)
 display_added_time = False
 end_match_timer = 0
 halftime_timer = 0
-start_delay_timer = 0  # <--- NEW VARIABLE
+start_delay_timer = 0
 red_card_obj = None
 red_card_spawned_this_half = False
 paused = False
@@ -648,8 +657,6 @@ team2_colors = []
 menu_scroll_y = 0
 is_dragging_scroll = False
 
-# Variables for Sliders
-# Variables for Sliders
 slider_dragging = None
 slider_rects = {
     "MASTER": pygame.Rect(590, 150, 160, 10),
@@ -663,6 +670,9 @@ ball1 = None
 ball2 = None
 crowd = []
 goal_sound_channel = None
+
+red_cards_1 = 0
+red_cards_2 = 0
 
 def get_outline_color(c):
     lum = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
@@ -707,18 +717,17 @@ def quit_match():
 def start_match():
     global ball1, ball2, crowd, team1_name, team2_name, team1_colors, team2_colors, state, score1, score2, goal_events_1, goal_events_2, frame_counter, goal_rotating, goal_sound_channel
     global red_card_obj, red_card_spawned_this_half, halftime_timer, particles, screen_shake_timer
-    global goal_angle, added_time_1, added_time_2, start_delay_timer # <--- Added here
+    global goal_angle, added_time_1, added_time_2, start_delay_timer, red_cards_1, red_cards_2
 
     score1, score2 = 0, 0
     goal_events_1 = []
     goal_events_2 = []
     frame_counter = 0
     goal_rotating = False
-    goal_angle = 1 * math.pi / 2  # Snaps goal to the bottom
+    goal_angle = 1 * math.pi / 2
     particles = []
     screen_shake_timer = 0
 
-    # Regenerates extra time for every new match
     added_time_1 = random.randint(2, 4)
     added_time_2 = random.randint(3, 8)
 
@@ -726,6 +735,9 @@ def start_match():
     red_card_spawned_this_half = False
     halftime_timer = 0
     goal_sound_channel = None
+
+    red_cards_1 = 0
+    red_cards_2 = 0
 
     home_key = TEAM_NAMES[selected_home_idx]
     away_key = TEAM_NAMES[selected_away_idx]
@@ -740,9 +752,8 @@ def start_match():
     ball1 = Ball(sx1, sy1, team1_colors, team1_name)
     ball2 = Ball(sx2, sy2, team2_colors, team2_name)
 
-    # Spawns the background dots strictly outside the pitch
     crowd = []
-    while len(crowd) < 120:
+    while len(crowd) < 1500:
         cx = random.randint(0, WIDTH)
         cy = random.randint(0, HEIGHT)
         dist = math.hypot(cx - center_x, cy - center_y)
@@ -754,9 +765,12 @@ def start_match():
             crowd.append((cx, cy, col))
 
     if stadium_music_loaded:
-        pygame.mixer.music.play(-1) 
+        pygame.mixer.music.play(-1)
 
-    start_delay_timer = int(3 * FPS)  # Sets a 0.5-second timer
+    if start_whistle_sound:
+        start_whistle_sound.play()
+
+    start_delay_timer = int(3 * FPS)
     state = "FIRST_HALF"
 
 running = True
@@ -771,11 +785,10 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
-            
-            # Invisible Go Back Button
+
             if state != "MENU" and pygame.Rect(0, 0, 100, 100).collidepoint(mx, my):
                 quit_match()
-                
+
             if state == "MENU":
                 for key, rect in slider_rects.items():
                     handle = pygame.Rect(rect.x + (master_vol if key=="MASTER" else vol_settings[key.lower()]) * rect.width - 10, rect.y - 10, 20, 30)
@@ -787,7 +800,7 @@ while running:
                 max_scroll = total_items_h - visible_h
                 if max_scroll < 0: max_scroll = 0
                 scrollbar_w = 15
-                scrollbar_x = 550  # Moved scrollbar to the right
+                scrollbar_x = 550
                 scrollbar_y_start = 120
                 scrollbar_h_total = visible_h
                 if total_items_h > 0: handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
@@ -816,7 +829,7 @@ while running:
         elif event.type == pygame.MOUSEBUTTONUP:
             is_dragging_scroll = False
             slider_dragging = None
-            
+
         elif event.type == pygame.MOUSEMOTION:
             if is_dragging_scroll:
                 visible_h = HEIGHT - 220
@@ -825,7 +838,7 @@ while running:
                 scrollbar_h_total = visible_h
                 if total_items_h > 0: handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
                 else: handle_h = scrollbar_h_total
-                
+
                 if max_scroll > 0:
                     mx, my = pygame.mouse.get_pos()
                     new_handle_y = my - mouse_offset_y
@@ -834,7 +847,7 @@ while running:
                         new_handle_y = 120 + scrollbar_h_total - handle_h
                     percent = (new_handle_y - 120) / (scrollbar_h_total - handle_h)
                     menu_scroll_y = -(percent * max_scroll)
-            
+
             if slider_dragging:
                 mx, my = pygame.mouse.get_pos()
                 rect = slider_rects[slider_dragging]
@@ -855,7 +868,7 @@ while running:
                 if menu_scroll_y < -max_scroll: menu_scroll_y = -max_scroll
 
         if state == "FULLTIME":
-            if end_match_timer > 2 * FPS:
+            if end_match_timer > 3 * FPS:
                 restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mx, my = pygame.mouse.get_pos()
@@ -870,7 +883,7 @@ while running:
             screen.fill(MENU_BG)
             title = font_menu_title.render("TAKIM SEÇİMİ", True, GOLD)
             screen.blit(title, (275 - title.get_width()//2, 20))
-            
+
             settings_title = font_menu_title.render("AYARLAR", True, GOLD)
             screen.blit(settings_title, (670 - settings_title.get_width()//2, 20))
 
@@ -878,7 +891,7 @@ while running:
             screen.blit(home_header, (50, 68))
             away_header = font_team.render("DEPLASMAN", True, WHITE)
             screen.blit(away_header, (300, 68))
-            
+
             clip_rect = pygame.Rect(0, 110, 570, HEIGHT - 210)
             screen.set_clip(clip_rect)
             for i, name in enumerate(TEAM_NAMES):
@@ -891,7 +904,7 @@ while running:
                 name_surf = font_menu_item.render(name, True, col)
                 screen.blit(name_surf, (300, item_y))
             screen.set_clip(None)
-            
+
             visible_h = HEIGHT - 220
             total_items_h = len(TEAM_NAMES) * 40
             max_scroll = total_items_h - visible_h
@@ -909,8 +922,7 @@ while running:
 
             pygame.draw.rect(screen, SCROLLBAR_BG, (scrollbar_x, scrollbar_y_start, scrollbar_w, scrollbar_h_total))
             pygame.draw.rect(screen, SCROLLBAR_HANDLE, (scrollbar_x, handle_y, scrollbar_w, handle_h), border_radius=5)
-            
-            # Draw Sliders
+
             labels = {"MASTER": "GENEL SES", "STADIUM": "STADYUM", "MUSIC": "GOL MÜZİĞİ", "COLLISION": "TOP ÇARPMA", "WHISTLE": "DÜDÜK"}
             for key, rect in slider_rects.items():
                 lbl = font_settings.render(labels[key], True, WHITE)
@@ -948,6 +960,7 @@ while running:
                             state = "HALFTIME"
                             halftime_timer = 0
                             red_card_obj = None
+                            if half_whistle_sound: half_whistle_sound.play()
                     else:
                         display_added_time = False
                 elif state == "SECOND_HALF":
@@ -962,6 +975,7 @@ while running:
                         if sim_minute >= 90 + added_time_2:
                             state = "FULLTIME"
                             end_match_timer = 0
+                            if end_whistle_sound: end_whistle_sound.play()
                     else:
                         display_added_time = False
 
@@ -969,6 +983,7 @@ while running:
                     state = "HALFTIME"
                     halftime_timer = 0
                     red_card_obj = None
+                    if half_whistle_sound: half_whistle_sound.play()
 
                 if goal_rotating:
                     goal_angle = (goal_angle + goal_rot_speed) % (2 * math.pi)
@@ -982,9 +997,8 @@ while running:
                         for b in [ball1, ball2]:
                             if red_card_obj.check_collision(b):
                                 b.nerf_timer = 20 * FRAMES_PER_SIM_MINUTE
-                                time_mark = f"{sim_minute}'"
-                                if b == ball1: goal_events_1.append((time_mark, "RED_CARD", "", frame_counter, state))
-                                else: goal_events_2.append((time_mark, "RED_CARD", "", frame_counter, state))
+                                if b == ball1: red_cards_1 += 1
+                                else: red_cards_2 += 1
                                 red_card_obj = None
                                 break
 
@@ -1057,10 +1071,10 @@ while running:
 
             screen.fill(BLACK)
             draw_striped_pitch(screen, center_x, center_y, ARENA_RADIUS)
-            
+
             for dot in crowd:
                 pygame.draw.circle(screen, dot[2], (dot[0], dot[1]), 2)
-            
+
             draw_real_goal(screen, center_x, center_y, ARENA_RADIUS, goal_angle, GOAL_WIDTH_RADIANS)
 
             if red_card_obj: red_card_obj.draw(screen)
@@ -1075,7 +1089,7 @@ while running:
             panel_w, panel_h = 500, 105
             panel_x = WIDTH // 2 - panel_w // 2
             table_surf = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
-            pygame.draw.rect(table_surf, (60, 60, 60, 240), (0, 0, panel_w, panel_h), border_radius=15)
+            pygame.draw.rect(table_surf, TABLE_BG, (0, 0, panel_w, panel_h), border_radius=15)
             screen.blit(table_surf, (panel_x, 20))
             pygame.draw.rect(screen, WHITE, (panel_x, 20, panel_w, panel_h), 2, border_radius=15)
 
@@ -1089,8 +1103,25 @@ while running:
             t1_txt_col = get_readable_color(team1_colors)
             t2_txt_col = get_readable_color(team2_colors)
 
-            draw_text_with_outline(screen, TEAMS[TEAM_NAMES[selected_home_idx]]["short"], font_team, t1_txt_col, panel_x + 30, align_y - 30, "left", outline_col=WHITE)
-            draw_text_with_outline(screen, TEAMS[TEAM_NAMES[selected_away_idx]]["short"], font_team, t2_txt_col, panel_x + panel_w - 30, align_y - 30, "right", outline_col=WHITE)
+            t1_short = TEAMS[TEAM_NAMES[selected_home_idx]]["short"]
+            t2_short = TEAMS[TEAM_NAMES[selected_away_idx]]["short"]
+
+            draw_text_with_outline(screen, t1_short, font_team, t1_txt_col, panel_x + 30, align_y - 30, "left", outline_col=WHITE)
+            draw_text_with_outline(screen, t2_short, font_team, t2_txt_col, panel_x + panel_w - 30, align_y - 30, "right", outline_col=WHITE)
+
+            t1_w, t1_h = font_team.size(t1_short)
+            for rc in range(red_cards_1):
+                rc_x = panel_x + 30 + t1_w + 10 + rc * 15
+                rc_y = align_y - 30 + t1_h // 2 - 8
+                pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
+                pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
+
+            t2_w, t2_h = font_team.size(t2_short)
+            for rc in range(red_cards_2):
+                rc_x = panel_x + panel_w - 30 - t2_w - 20 - rc * 15
+                rc_y = align_y - 30 + t2_h // 2 - 8
+                pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
+                pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
 
             center_score_x = WIDTH // 2
             draw_text_with_outline(screen, str(score1), font_score, t1_txt_col, center_score_x - 50, align_y, outline_col=WHITE)
@@ -1122,9 +1153,6 @@ while running:
                         if e_type == "GOAL":
                             txt = f"GOLLL! {scorer} ({t_str})"
                             col = team_color
-                        else:
-                            txt = f"Kırmızı Kart! ({t_str})"
-                            col = RED_CARD_COLOR
                         recent_event = (txt, col)
                         continue
 
@@ -1133,12 +1161,6 @@ while running:
                     draw_x = x_pos
                     if align_right: draw_x = x_pos - t_surf.get_width()
                     screen.blit(t_surf, (draw_x, y_off))
-
-                    if e_type == "RED_CARD":
-                        rc_rect = pygame.Rect(draw_x + t_surf.get_width() + 5, y_off + 2, 10, 14)
-                        if align_right: rc_rect.x = draw_x - 15
-                        pygame.draw.rect(screen, RED_CARD_COLOR, rc_rect)
-                        pygame.draw.rect(screen, WHITE, rc_rect, 1)
 
                     y_off += 20
                 return recent_event
@@ -1168,7 +1190,7 @@ while running:
             elif state == "FULLTIME":
                 end_match_timer += 1
                 draw_text_with_outline(screen, "MAÇ SONU", font_event, WHITE, center_x, center_y, outline_col=BLACK)
-                if end_match_timer > 2 * FPS:
+                if end_match_timer > 3 * FPS:
                     restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
                     pygame.draw.rect(screen, GRASS_1, restart_btn_rect, border_radius=15)
                     pygame.draw.rect(screen, WHITE, restart_btn_rect, 3, border_radius=15)
