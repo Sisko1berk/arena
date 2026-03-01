@@ -2,32 +2,32 @@ GALATASARAY: Osimhen, Icardi, Leroy Sané, Barış Alper, Gabriel Sara
 FENERBAHÇE: Kerem Aktürkoğlu, Talisca, Marco Asensio, Milan Škriniar, Talisca, Talisca, Marco Asensio, Sidiki Chérif, Kerem Aktürkoğlu, İsmail Yüksek
 BEŞİKTAŞ: Vaclav Cerny, Orkun Kökçü, Cengiz Ünder, Hyeon-gyu Oh
 TRABZONSPOR: Paul Onuachu, Anthony Nwakaeme, Oleksandr Zubkov, Felipe Augusto, Ozan Tufan
-BAŞAKŞEHİR: Eldor Shomurodov, Piatek, Deniz Türüç, Serdar Gürler, Kemen
+BAŞAKŞEHİR: Eldor Shomurodov, Selke, Amine Harit, Nuno Da Costa, Kemen
 KASIMPAŞA: İrfan Can Kahveci, Cenk Tosun, Kerem Demirbay
 SİVASSPOR: Rey Manaj, Koita, Pritchard, Garry Rodrigues, Turgunboev
-ALANYASPOR: Sergio Cordova, Efecan Karaca, Güven Yalçın, Janvier, Augusto
-RİZESPOR: Ali Sowe, Olawoyin, Akintola, Varesanovic, Hadziahmetovic
-ANTALYASPOR: Adolfo Gaich, Sam Larsson, Safuri, Townsend, Kaluzinski
-GAZİANTEP FK: Kenan Kodro, Alexandru Maxim, Okereke, Kozlowski, Lungoyi
-KONYASPOR: Kramer, Aleksic, Pedrinho, Yusuf Erdoğan, Ndao
+ALANYASPOR: Elia, Efecan Karaca, Güven Yalçın, Ianis Hagi, Maestro
+RİZESPOR: Ali Sowe, Olawoyin, Pierrot, Dervişoğlu
+ANTALYASPOR: Nikola Storm, Van de Streek, Yohan Boli
+GAZİANTEP FK: Kozlowski, Mohamed Bayo, Alexandru Maxim
+KONYASPOR: Kramer, Bardhi, Pedrinho, Gonçalves, Muleka
 KAYSERİSPOR: Duckens Nazon, Boa Morte, Cardoso, Mane, Bourabia
 BODRUM FK: Puşcaş, Gökdeniz Bayrakdar, Seferi, Fredy, Taylan Antalyalı
-EYÜPSPOR: Mame Thiam, Ahmed Kutucu, Samu Saiz, Emre Akbaba, Midtsjo
+EYÜPSPOR: Umut Bozok, Lenny Pintor, Emre Akbaba, Luccas Claro
 GÖZTEPE: Juan Santos, Janderson, Arda Kurtulan
-KOCAELİ: Saffet Sancaklı, Kaan Dobra, Serdar Topraktepe
-KAYSERİ: Gökhan Ünal, Ariza Makukula, Mame Thiam
-KARAGÜMRÜK: Fabio Borini, Mbaye Diagne, Aleksandar Pesic
-GENÇLERBİRLİĞİ: Bogdan Stancu, Souleymane Youla, Andre Kona
-SAMSUNSPOR: Marius Mouandilmadji, Cheriff Ndiaye, Emre Kılınç, Carlo Holse, Carlo Holse, Carlo Holse
+KOCAELİSPOR: Bruno Petkovic, Serdar Dursun, Karol Linetty
+KAYSERİ: Laszlo Benes, German Oungkha, Fedor Chalov
+KARAGÜMRÜK: Serginho, Daniele Verde, Traore
+GENÇLERBİRLİĞİ: Sekou Koita, Oğulcan Ülgün, Metehan Mimaroğlu
+SAMSUNSPOR: Marius Mouandilmadji, Cheriff Ndiaye, Emre Kılınç, Carlo Holse,
 HATAYSPOR: Strandberg, Dele-Bashiru, Rivas, Joelson Fernandes, Görkem Sağlam
 ADANA DEMİR: Abat Aybetov, Yusuf Sarı, Tayfun Aydoğan, Maestro, Alioui
 MAN CITY: Haaland, Phil Foden, Antoine Semenyo, Marc Guehi, Savinho
 LIVERPOOL: Mohamed Salah, Luis Diaz, Darwin Nunez, Cody Gakpo, Hugo Ekitike
-ARSENAL: Bukayo Saka, Odegaard, Kai Havertz, Gabriel Martinelli, Declan Rice
+ARSENAL: Bukayo Saka, Gyökeres, Eberechi Eze, Trossard, Declan Rice
 ASTON VILLA: Ollie Watkins, Morgan Rogers, Leon Bailey, McGinn, Youri Tielemans
 TOTTENHAM: Solanke, James Maddison, Brennan Johnson, Kulusevski, Son Heung-min
 MAN UTD: Bruno Fernandes, Rashford, Hojlund, Garnacho, Mainoo
-CHELSEA: Cole Palmer, João Pedro, Nicolas Jackson, Joao Felix, Nkunku
+CHELSEA: Cole Palmer, João Pedro, Enzo Fernandez, Pedro Neto, Moises Caicedo
 REAL MADRID: Mbappé, Vinicius Jr, Jude Bellingham, Rodrygo, Arda Güler
 BARCELONA: Lewandowski, Lamine Yamal, Ferran Torres, Raphinha, Dani Olmo
 ATLETICO: Julian Alvarez, Griezmann, Alexander Sorloth
@@ -70,5 +70,8 @@ NEWCASTLE: Harvey Barnes, Anthony Gordon, Yoane Wissa, Jacob Murphy
 QARABAG: Camilo Duràn, Musa Qurbanlı, Kady Borges, Leandro Andrade
 OLYMPIACOS: El Kaabi, Mehdi Taremi,  Gelson Martins, Chiquinho, Podence
 BODO/GLIMT: Hauge, Evjen, Bjørkan, Berg, Høgh
+WEST HAM: Adama Traoré, Callum Wilson, Jarrod Bowen
+LEEDS UTD: Dominic Calvert-Lewin, Lukas Nmecha, Joël Piroe
+
 
 

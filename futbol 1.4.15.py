@@ -9,10 +9,10 @@ WIDTH, HEIGHT = 800, 800
 FPS = 80
 FRAMES_PER_SIM_MINUTE = 26
 
-ARENA_RADIUS = 240
+ARENA_RADIUS = 220
 BALL_RADIUS = 37
-GOAL_WIDTH_RADIANS = 0.32
-POST_RADIUS = 7
+GOAL_WIDTH_RADIANS = 0.42  # Güncellendi
+POST_RADIUS = 4           # Frame kalınlığına uyması için ayarlandı
 GOAL_DEPTH = 52
 
 SPEED = 5.5
@@ -166,10 +166,27 @@ TEAMS = {
     "SUNDERLAND":     {"colors": [(255, 0, 0), (255, 255, 255)],    "short": "SUN"},
     "WEST HAM":       {"colors": [(122, 38, 58), (27, 177, 231)],   "short": "WHU"},
     "WOLVES":         {"colors": [(253, 185, 19), (0, 0, 0)],       "short": "WOL"},
+    "CAGLIARI":       {"colors": [(163, 19, 51), (0, 35, 80)],     "short": "CAG"},
+    "COMO":           {"colors": [(0, 71, 169), (255, 255, 255)],  "short": "COM"},
+    "CREMONESE":      {"colors": [(130, 130, 130), (227, 34, 25)], "short": "CRE"},
+    "FIORENTINA":     {"colors": [(72, 46, 146), (255, 255, 255)], "short": "FIO"},
+    "GENOA":          {"colors": [(166, 28, 49), (0, 36, 81)],     "short": "GNO"}, # KISA ADI GNO OLARAK DÜZELTİLDİ
+    "LECCE":          {"colors": [(255, 217, 0), (227, 34, 25)],   "short": "LEC"},
+    "NAPOLI":         {"colors": [(18, 160, 215), (255, 255, 255)],"short": "NAP"},
+    "PARMA":          {"colors": [(255, 204, 0), (0, 51, 153)],    "short": "PAR"},
+    "PISA":           {"colors": [(0, 0, 0), (0, 84, 166)],        "short": "PIS"},
+    "SASSUOLO":       {"colors": [(0, 160, 90), (0, 0, 0)],        "short": "SAS"},
+    "TORINO":         {"colors": [(138, 30, 50), (255, 255, 255)], "short": "TOR"},
+    "UDINESE":        {"colors": [(0, 0, 0), (255, 255, 255)],     "short": "UDI"},
+    "VERONA":         {"colors": [(0, 51, 102), (255, 204, 0)],    "short": "VER"},
 }
 
-TEAM_NAMES = list(TEAMS.keys())
+TEAM_NAMES = sorted(list(TEAMS.keys()))
 PLAYER_DATABASE = {}
+
+# --- ARAMA ÇUBUĞU DEĞİŞKENLERİ ---
+search_text = ""
+search_active = False
 
 def load_player_database():
     db = {}
@@ -219,7 +236,7 @@ def apply_volumes():
     if start_whistle_sound: start_whistle_sound.set_volume(whistle_vol)
     if half_whistle_sound: half_whistle_sound.set_volume(whistle_vol)
     if end_whistle_sound: end_whistle_sound.set_volume(whistle_vol)
-    if red_card_sound: red_card_sound.set_volume(whistle_vol) # Kırmızı kart ses düzeyi uygulandı
+    if red_card_sound: red_card_sound.set_volume(whistle_vol)
 
     for snd in goal_sounds.values():
         if snd: snd.set_volume(vol_settings["music"] * master_vol)
@@ -297,7 +314,6 @@ def get_safe_path(folder, filename):
     if os.path.exists(abs_path): return abs_path
     return rel_path
 
-# TÜRK TAKIMLARI
 LOGO_FILES = {
     "GS": "gs.png", "FB": "fb.png", "BJK": "bjk.png", "TS": "ts.png",
     "ALN": "alanya.png", "ANT": "antalyaspor.png", "BFK": "başakşehir.png",
@@ -307,7 +323,6 @@ LOGO_FILES = {
     "RİZ": "rize.png", "SAM": "samsun.png"
 }
 
-# PREMIER LİG TAKIMLARI
 LOGO_FILES_PL = {
     "ARS": "arsenal.png", "AVL": "aston.png", "BOU": "bournemouth.png",
     "BRE": "brentford.png", "BHA": "brighton.png", "BUR": "burnley.png",
@@ -318,7 +333,6 @@ LOGO_FILES_PL = {
     "WHU": "west ham.png", "WOL": "wolves.png"
 }
 
-# ALMAN TAKIMLARI (imagesDE klasörü)
 LOGO_FILES_DE = {
     "AUG": "augsburg.png",
     "BAY": "bayern.png",
@@ -336,8 +350,32 @@ LOGO_FILES_DE = {
     "STP": "stpauli.png",
     "VFB": "stuttgart.png",
     "UNB": "unionberlin.png",
-    "WER": "werderbremen.png",  # Görseldeki yazıma birebir uygun yazıldı
+    "WER": "werderbremen.png",
     "WOB": "wolfsburg.png"
+}
+
+# İTALYAN TAKIMLARI (imagesIT klasörü)
+LOGO_FILES_IT = {
+    "ATA": "atalanta.png",
+    "BOL": "bologna.png",
+    "CAG": "cagliari.png",
+    "COM": "como.png",
+    "CRE": "cremonese.png",
+    "FIO": "fiorentina.png",
+    "GNO": "genoa.png",
+    "INT": "inter.png",
+    "JUV": "juventus.png",
+    "LAZ": "lazio.png",
+    "LEC": "lecce.png",
+    "MIL": "milan.png",
+    "NAP": "napoli.png",
+    "PAR": "parma.png",
+    "PIS": "pisa.png",
+    "ROM": "roma.png",
+    "SAS": "sassuolo.png",
+    "TOR": "torino.png",
+    "UDI": "udinese.png",
+    "VER": "verona.png"
 }
 
 def load_and_format_logo(filepath, target_size, padding_factor=0.75):
@@ -360,7 +398,6 @@ def load_and_format_logo(filepath, target_size, padding_factor=0.75):
         print(f"HATA - Logo Bozuk ({filepath}): {e}")
         return None
 
-# Logoları Yükleme Döngüleri
 for team_short, filename in LOGO_FILES.items():
     file_path = get_safe_path("imagesTR", filename)
     formatted_logo = load_and_format_logo(file_path, logo_size)
@@ -371,9 +408,13 @@ for team_short, filename in LOGO_FILES_PL.items():
     formatted_logo = load_and_format_logo(file_path, logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
 
-# YENİ: Alman logolarını imagesDE klasöründen yükle
 for team_short, filename in LOGO_FILES_DE.items():
     file_path = get_safe_path("imagesDE", filename)
+    formatted_logo = load_and_format_logo(file_path, logo_size)
+    if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
+
+for team_short, filename in LOGO_FILES_IT.items():
+    file_path = get_safe_path("imagesIT", filename)
     formatted_logo = load_and_format_logo(file_path, logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
 # ----------------------------------------
@@ -435,46 +476,115 @@ def draw_striped_pitch(surface, cx, cy, radius):
     pygame.gfxdraw.aacircle(surface, cx, cy, 47, WHITE)
 
 def calculate_goal_posts(cx, cy, radius, angle, width_rad):
+    INWARD_OFFSET = 22
+    
+    # Merkez noktasını içeri alıyoruz (indentation)
+    gx = cx + math.cos(angle) * (radius - INWARD_OFFSET)
+    gy = cy + math.sin(angle) * (radius - INWARD_OFFSET)
+    
+    # Genişliği hesaplayıp direkleri yerleştiriyoruz
+    half_width = (width_rad * radius) / 2
+    dx = math.cos(angle + math.pi/2) * half_width
+    dy = math.sin(angle + math.pi/2) * half_width
+
+    p1x = gx - dx
+    p1y = gy - dy
+    p2x = gx + dx
+    p2y = gy + dy
+
     start_angle = angle - width_rad / 2
     end_angle = angle + width_rad / 2
-    p1x = cx + math.cos(start_angle) * radius
-    p1y = cy + math.sin(start_angle) * radius
-    p2x = cx + math.cos(end_angle) * radius
-    p2y = cy + math.sin(end_angle) * radius
     return (p1x, p1y), (p2x, p2y), start_angle, end_angle
 
 def draw_real_goal(surface, cx, cy, radius, angle, width_rad):
     (p1x, p1y), (p2x, p2y), start_angle, end_angle = calculate_goal_posts(cx, cy, radius, angle, width_rad)
-    depth = GOAL_DEPTH
-    b1x = cx + math.cos(start_angle) * (radius + depth)
-    b1y = cy + math.sin(start_angle) * (radius + depth)
-    b2x = cx + math.cos(end_angle) * (radius + depth)
-    b2y = cy + math.sin(end_angle) * (radius + depth)
+    
+    # Kaleyi içeri aldığımız için arkaya doğru uzanma mesafesini ayarlıyoruz (Dikdörtgen form)
+    dx = math.cos(angle) * GOAL_DEPTH
+    dy = math.sin(angle) * GOAL_DEPTH
+    
+    b1x = p1x + dx
+    b1y = p1y + dy
+    b2x = p2x + dx
+    b2y = p2y + dy
 
-    for i in range(1, 6):
-        ratio = i / 6
-        lx1 = p1x + (b1x - p1x) * ratio
-        ly1 = p1y + (b1y - p1y) * ratio
-        lx2 = p2x + (b2x - p2x) * ratio
-        ly2 = p2y + (b2y - p2y) * ratio
-        pygame.draw.aaline(surface, NET_COLOR, (lx1, ly1), (lx2, ly2))
-        lx3 = p1x + (p2x - p1x) * ratio
-        ly3 = p1y + (p2y - p1y) * ratio
-        lx4 = b1x + (b2x - b1x) * ratio
-        ly4 = b1y + (b2y - b1y) * ratio
-        pygame.draw.aaline(surface, NET_COLOR, (lx3, ly3), (lx4, ly4))
+    # --- AĞLARIN ARENA ÇİZGİSİNDEN BAŞLAMASI İÇİN MATEMATİK ---
+    # Yan direklerin arena çemberi ile kesiştiği noktaları buluyoruz
+    rel_x1 = p1x - cx
+    rel_y1 = p1y - cy
+    B1 = 2 * (rel_x1 * math.cos(angle) + rel_y1 * math.sin(angle))
+    C1 = rel_x1**2 + rel_y1**2 - radius**2
+    D1 = B1**2 - 4 * C1
+    t1 = (-B1 + math.sqrt(D1)) / 2 if D1 >= 0 else 20
+    
+    nf1x = p1x + t1 * math.cos(angle)
+    nf1y = p1y + t1 * math.sin(angle)
+    
+    rel_x2 = p2x - cx
+    rel_y2 = p2y - cy
+    B2 = 2 * (rel_x2 * math.cos(angle) + rel_y2 * math.sin(angle))
+    C2 = rel_x2**2 + rel_y2**2 - radius**2
+    D2 = B2**2 - 4 * C2
+    t2 = (-B2 + math.sqrt(D2)) / 2 if D2 >= 0 else 20
+    
+    nf2x = p2x + t2 * math.cos(angle)
+    nf2y = p2y + t2 * math.sin(angle)
 
-    pygame.draw.lines(surface, WHITE, False, [(p1x, p1y), (b1x, b1y), (b2x, b2y), (p2x, p2y)], 3)
+    # Arena yayının başlangıç ve bitiş açıları
+    ang1 = math.atan2(nf1y - cy, nf1x - cx)
+    ang2 = math.atan2(nf2y - cy, nf2x - cx)
+    diff = ang2 - ang1
+    while diff > math.pi: diff -= 2 * math.pi
+    while diff < -math.pi: diff += 2 * math.pi
 
+    # --- YENİ, DAHA İYİ AĞ ÇİZİMİ ---
+    steps_lr = 10  # Sol-sağ arası dikey ağ ipleri
+    steps_fb = 5   # Ön-arka arası yatay ağ ipleri
+    
+    # Yatay (kavisli başlayıp arkada düzleşen) ağ çizgileri
+    for j in range(1, steps_fb + 1):
+        ratio_fb = j / steps_fb
+        points = []
+        for i in range(steps_lr + 1):
+            ratio_lr = i / steps_lr
+            
+            # Ön yay üzerindeki nokta
+            a = ang1 + diff * ratio_lr
+            arc_x = cx + radius * math.cos(a)
+            arc_y = cy + radius * math.sin(a)
+            
+            # Arka düz çizgi üzerindeki nokta
+            back_x = b1x + (b2x - b1x) * ratio_lr
+            back_y = b1y + (b2y - b1y) * ratio_lr
+            
+            # İkisinin arası interpolasyon (kavisli mesh efekti)
+            net_x = arc_x + (back_x - arc_x) * ratio_fb
+            net_y = arc_y + (back_y - arc_y) * ratio_fb
+            points.append((net_x, net_y))
+        
+        if len(points) > 1:
+            pygame.draw.aalines(surface, NET_COLOR, False, points)
+
+    # Dikey çizgiler (Ön yaydan arkaya doğru uzanan ipler)
+    for i in range(1, steps_lr):
+        ratio_lr = i / steps_lr
+        a = ang1 + diff * ratio_lr
+        arc_x = cx + radius * math.cos(a)
+        arc_y = cy + radius * math.sin(a)
+        
+        back_x = b1x + (b2x - b1x) * ratio_lr
+        back_y = b1y + (b2y - b1y) * ratio_lr
+        
+        pygame.draw.aaline(surface, NET_COLOR, (arc_x, arc_y), (back_x, back_y))
+
+    # Kalın, dikdörtgen dış çerçeve (Direklerden arkaya tam uzanır)
+    pygame.draw.lines(surface, WHITE, False, [(p1x, p1y), (b1x, b1y), (b2x, b2y), (p2x, p2y)], 7)
+
+    # Direk bitişlerindeki toplar (7 frame kalınlığına uygun, içi dolu beyaz)
     pygame.gfxdraw.aacircle(surface, int(p1x), int(p1y), POST_RADIUS, WHITE)
     pygame.gfxdraw.filled_circle(surface, int(p1x), int(p1y), POST_RADIUS, WHITE)
     pygame.gfxdraw.aacircle(surface, int(p2x), int(p2y), POST_RADIUS, WHITE)
     pygame.gfxdraw.filled_circle(surface, int(p2x), int(p2y), POST_RADIUS, WHITE)
-
-    pygame.gfxdraw.aacircle(surface, int(p1x), int(p1y), POST_RADIUS-2, POST_INNER_COLOR)
-    pygame.gfxdraw.filled_circle(surface, int(p1x), int(p1y), POST_RADIUS-2, POST_INNER_COLOR)
-    pygame.gfxdraw.aacircle(surface, int(p2x), int(p2y), POST_RADIUS-2, POST_INNER_COLOR)
-    pygame.gfxdraw.filled_circle(surface, int(p2x), int(p2y), POST_RADIUS-2, POST_INNER_COLOR)
 
 def get_random_spawn(cx, cy, r_limit):
     while True:
@@ -524,6 +634,7 @@ class Ball:
         self.text = text
         self.mass = 1.0
         self.nerf_timer = 0
+        self.yellow_nerf_timer = 0  # Yeni eklendi (Görsel highlight yapmaz, sadece yavaşlatır)
         self.speed_multiplier = 1
         self.shadow_offset = 8
 
@@ -549,8 +660,13 @@ class Ball:
             self.history.pop(0)
 
         self.vy += GRAVITY
+        
+        # Nerf Kontrolleri
         if self.nerf_timer > 0:
             self.nerf_timer -= 1
+            self.speed_multiplier = 0.8
+        elif self.yellow_nerf_timer > 0:
+            self.yellow_nerf_timer -= 1
             self.speed_multiplier = 0.8
         else:
             self.speed_multiplier = 1.0
@@ -608,8 +724,10 @@ class Ball:
 
         surface.blit(ball_surf, (int(self.x) - self.radius, int(self.y) - self.radius))
 
+        # GÖRSEL HIGHLIGHT (Sarı kart bunu tetiklemez, sadece red card tetikler)
         if self.nerf_timer > 0:
             pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), self.radius + 4, 2)
+
 
     def collide_wall(self, cx, cy, radius):
         dx = self.x - cx
@@ -687,7 +805,81 @@ def resolve_collisions(b1, b2):
         b1.vy -= impulse_y / b1.mass
         b2.vx += impulse_x / b2.mass
         b2.vy += impulse_y / b2.mass
+        
+        hit_x = b1.x + nx * b1.radius
+        hit_y = b1.y + ny * b1.radius
+        for _ in range(5):
+            p = Particle(hit_x, hit_y, random.choice(b1.color))
+            p.vx += -nx * 3
+            p.vy += -ny * 3
+            particles.append(p)
+        for _ in range(5):
+            p = Particle(hit_x, hit_y, random.choice(b2.color))
+            p.vx += nx * 3
+            p.vy += ny * 3
+            particles.append(p)
+        
         return True
+    return False
+
+# --- SARI KART DEĞİŞKENLERİ ---
+yellow_card_obj = None
+yellow_cards_1 = 0
+yellow_cards_2 = 0
+yellow_cards_spawned_this_half = 0
+target_yellow_cards = 0
+
+class YellowCard:
+    def __init__(self, cx, cy):
+        angle = random.uniform(0, 2 * math.pi)
+        dist = math.sqrt(random.random()) * (ARENA_RADIUS - 60)
+        self.x = cx + math.cos(angle) * dist
+        self.y = cy + math.sin(angle) * dist
+        self.vx = random.uniform(-0.4, 0.4)
+        self.vy = random.uniform(-0.4, 0.4)
+        self.width = 16
+        self.height = 24
+        self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2, self.width, self.height)
+        self.life_timer = 10 * FRAMES_PER_SIM_MINUTE
+        self.blink_start_time = 5 * FRAMES_PER_SIM_MINUTE
+        self.visible = True
+        self.active = True
+
+    def update(self):
+        if not self.active: return
+        self.life_timer -= 1
+        if self.life_timer <= 0:
+            self.active = False
+            return
+        self.x += self.vx
+        self.y += self.vy
+        dist_from_center = math.hypot(self.x - center_x, self.y - center_y)
+        if dist_from_center > ARENA_RADIUS - 50:
+            self.vx *= -1
+            self.vy *= -1
+        self.rect.center = (self.x, self.y)
+        if self.life_timer < (10 * FRAMES_PER_SIM_MINUTE) - self.blink_start_time:
+            self.visible = (self.life_timer // 10) % 2 != 0
+        else:
+            self.visible = True
+
+    def draw(self, surface):
+        if self.active and self.visible:
+            pygame.draw.rect(surface, (255, 220, 0), self.rect)
+            pygame.draw.rect(surface, WHITE, self.rect, 1)
+
+    def check_collision(self, ball):
+        if not self.active: return False
+        closest_x = max(self.rect.left, min(ball.x, self.rect.right))
+        closest_y = max(self.rect.top, min(ball.y, self.rect.bottom))
+        dx = ball.x - closest_x
+        dy = ball.y - closest_y
+        if dx*dx + dy*dy < ball.radius**2:
+            self.active = False
+            # No sound or highlight requested for yellow cards!
+            return True
+        return False
+
 
 class RedCard:
     def __init__(self, cx, cy):
@@ -740,7 +932,7 @@ class RedCard:
         dist_sq = dx*dx + dy*dy
         if dist_sq < ball.radius**2:
             self.active = False
-            play_red_card_sound() # KIRMIZI KART SESİ BURADA ÇALIYOR
+            play_red_card_sound()
             return True
         return False
 
@@ -840,6 +1032,7 @@ def start_match():
     global ball1, ball2, crowd, team1_name, team2_name, team1_colors, team2_colors, state, score1, score2, goal_events_1, goal_events_2, frame_counter, goal_rotating, goal_sound_channel
     global red_card_obj, red_card_spawned_this_half, halftime_timer, particles, screen_shake_timer
     global goal_angle, added_time_1, added_time_2, start_delay_timer, cinematic_timer, red_cards_1, red_cards_2
+    global yellow_card_obj, yellow_cards_1, yellow_cards_2, yellow_cards_spawned_this_half, target_yellow_cards
 
     score1, score2 = 0, 0
     goal_events_1 = []
@@ -861,6 +1054,13 @@ def start_match():
     red_cards_1 = 0
     red_cards_2 = 0
 
+    # Yeni Sarı Kart Sıfırlamaları
+    yellow_cards_1 = 0
+    yellow_cards_2 = 0
+    yellow_card_obj = None
+    yellow_cards_spawned_this_half = 0
+    target_yellow_cards = random.randint(1, 3)
+
     home_key = TEAM_NAMES[selected_home_idx]
     away_key = TEAM_NAMES[selected_away_idx]
 
@@ -875,22 +1075,19 @@ def start_match():
     ball2 = Ball(sx2, sy2, team2_colors, team2_name)
 
     crowd = []
-    while len(crowd) < 1500:
+    while len(crowd) < 300:
         cx = random.randint(0, WIDTH)
         cy = random.randint(0, HEIGHT)
         dist = math.hypot(cx - center_x, cy - center_y)
         if dist > ARENA_RADIUS + 10:
-            rand_val = random.random()
-            if rand_val < 0.45: col = random.choice(team1_colors)
-            elif rand_val < 0.90: col = random.choice(team2_colors)
-            else: col = (50, 50, 50)
+            # Sadece takım renkleri seçiliyor, gri ihtimali kaldırıldı!
+            col = random.choice(team1_colors) if random.random() < 0.5 else random.choice(team2_colors)
             crowd.append((cx, cy, col))
 
     if stadium_music_loaded:
         pygame.mixer.music.play(-1)
 
-    # Ses çalmayı start_delay_timer bitimine devrettik
-    start_delay_timer = int(0.5 * FPS) # Maç başı 0.5 saniye bekleme
+    start_delay_timer = int(0.5 * FPS)
     cinematic_timer = 0
     state = "FIRST_HALF"
 
@@ -904,6 +1101,15 @@ while running:
             if event.key == pygame.K_q: quit_match()
             if event.key == pygame.K_r and state in ["FIRST_HALF", "SECOND_HALF", "HALFTIME", "FULLTIME"]: start_match()
 
+            if state == "MENU" and search_active:
+                if event.key == pygame.K_RETURN:
+                    search_active = False
+                elif event.key == pygame.K_BACKSPACE:
+                    search_text = search_text[:-1]
+                else:
+                    search_text += event.unicode
+                menu_scroll_y = 0 
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
 
@@ -911,18 +1117,25 @@ while running:
                 quit_match()
 
             if state == "MENU":
+                search_rect = pygame.Rect(50, 110, 470, 30)
+                if search_rect.collidepoint(mx, my):
+                    search_active = True
+                else:
+                    search_active = False
+
                 for key, rect in slider_rects.items():
                     handle = pygame.Rect(rect.x + (master_vol if key=="MASTER" else vol_settings[key.lower()]) * rect.width - 10, rect.y - 10, 20, 30)
                     if handle.collidepoint(mx, my) or rect.collidepoint(mx, my):
                         slider_dragging = key
 
-                visible_h = HEIGHT - 220
-                total_items_h = len(TEAM_NAMES) * 40
+                filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+                visible_h = HEIGHT - 250
+                total_items_h = len(filtered_teams) * 40
                 max_scroll = total_items_h - visible_h
                 if max_scroll < 0: max_scroll = 0
                 scrollbar_w = 15
                 scrollbar_x = 550
-                scrollbar_y_start = 120
+                scrollbar_y_start = 150
                 scrollbar_h_total = visible_h
                 if total_items_h > 0: handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
                 else: handle_h = scrollbar_h_total
@@ -937,13 +1150,15 @@ while running:
                 if handle_rect.collidepoint(mx, my):
                     is_dragging_scroll = True
                     mouse_offset_y = my - handle_y
-                for i, name in enumerate(TEAM_NAMES):
-                    item_y = 120 + i * 40 + menu_scroll_y
-                    if item_y > 100 and item_y < HEIGHT - 110:
+                
+                for i, name in enumerate(filtered_teams):
+                    item_y = 150 + i * 40 + menu_scroll_y
+                    if item_y > 140 and item_y < HEIGHT - 110:
+                        orig_idx = TEAM_NAMES.index(name)
                         rect1 = pygame.Rect(50, item_y, 220, 30)
-                        if rect1.collidepoint(mx, my): selected_home_idx = i
+                        if rect1.collidepoint(mx, my): selected_home_idx = orig_idx
                         rect2 = pygame.Rect(300, item_y, 220, 30)
-                        if rect2.collidepoint(mx, my): selected_away_idx = i
+                        if rect2.collidepoint(mx, my): selected_away_idx = orig_idx
 
                 if start_btn_rect.collidepoint(mx, my): start_match()
 
@@ -953,8 +1168,9 @@ while running:
 
         elif event.type == pygame.MOUSEMOTION:
             if is_dragging_scroll:
-                visible_h = HEIGHT - 220
-                total_items_h = len(TEAM_NAMES) * 40
+                filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+                visible_h = HEIGHT - 250
+                total_items_h = len(filtered_teams) * 40
                 max_scroll = total_items_h - visible_h
                 scrollbar_h_total = visible_h
                 if total_items_h > 0: handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
@@ -963,10 +1179,10 @@ while running:
                 if max_scroll > 0:
                     mx, my = pygame.mouse.get_pos()
                     new_handle_y = my - mouse_offset_y
-                    if new_handle_y < 120: new_handle_y = 120
-                    if new_handle_y > 120 + scrollbar_h_total - handle_h:
-                        new_handle_y = 120 + scrollbar_h_total - handle_h
-                    percent = (new_handle_y - 120) / (scrollbar_h_total - handle_h)
+                    if new_handle_y < 150: new_handle_y = 150
+                    if new_handle_y > 150 + scrollbar_h_total - handle_h:
+                        new_handle_y = 150 + scrollbar_h_total - handle_h
+                    percent = (new_handle_y - 150) / (scrollbar_h_total - handle_h)
                     menu_scroll_y = -(percent * max_scroll)
 
             if slider_dragging:
@@ -980,8 +1196,9 @@ while running:
 
         elif event.type == pygame.MOUSEWHEEL:
             if state == "MENU":
-                visible_h = HEIGHT - 220
-                total_items_h = len(TEAM_NAMES) * 40
+                filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+                visible_h = HEIGHT - 250
+                total_items_h = len(filtered_teams) * 40
                 max_scroll = total_items_h - visible_h
                 if max_scroll < 0: max_scroll = 0
                 menu_scroll_y += event.y * 30
@@ -1013,26 +1230,38 @@ while running:
             away_header = font_team.render("DEPLASMAN", True, WHITE)
             screen.blit(away_header, (300, 68))
 
-            clip_rect = pygame.Rect(0, 110, 570, HEIGHT - 210)
+            search_rect = pygame.Rect(50, 110, 470, 30)
+            pygame.draw.rect(screen, SCROLLBAR_BG if not search_active else (60, 60, 75), search_rect, border_radius=5)
+            pygame.draw.rect(screen, WHITE if search_active else SCROLLBAR_HANDLE, search_rect, 2, border_radius=5)
+            
+            prompt_text = search_text if search_text else "Takım Ara..."
+            txt_color = WHITE if search_text else (150, 150, 150)
+            search_surf = font_settings.render(prompt_text, True, txt_color)
+            screen.blit(search_surf, (60, 115))
+
+            filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+
+            clip_rect = pygame.Rect(0, 150, 570, HEIGHT - 260)
             screen.set_clip(clip_rect)
-            for i, name in enumerate(TEAM_NAMES):
-                item_y = 120 + i * 40 + menu_scroll_y
-                if item_y < 100 or item_y > HEIGHT - 100: continue
-                col = SELECTED_COLOR if i == selected_home_idx else WHITE
+            for i, name in enumerate(filtered_teams):
+                orig_idx = TEAM_NAMES.index(name)
+                item_y = 150 + i * 40 + menu_scroll_y
+                if item_y < 130 or item_y > HEIGHT - 100: continue
+                col = SELECTED_COLOR if orig_idx == selected_home_idx else WHITE
                 name_surf = font_menu_item.render(name, True, col)
                 screen.blit(name_surf, (50, item_y))
-                col = SELECTED_COLOR if i == selected_away_idx else WHITE
+                col = SELECTED_COLOR if orig_idx == selected_away_idx else WHITE
                 name_surf = font_menu_item.render(name, True, col)
                 screen.blit(name_surf, (300, item_y))
             screen.set_clip(None)
 
-            visible_h = HEIGHT - 220
-            total_items_h = len(TEAM_NAMES) * 40
+            visible_h = HEIGHT - 250
+            total_items_h = len(filtered_teams) * 40
             max_scroll = total_items_h - visible_h
             if max_scroll < 0: max_scroll = 0
             scrollbar_w = 15
             scrollbar_x = 550
-            scrollbar_y_start = 120
+            scrollbar_y_start = 150
             scrollbar_h_total = visible_h
             if total_items_h > 0: handle_h = max(30, (visible_h / total_items_h) * scrollbar_h_total)
             else: handle_h = scrollbar_h_total
@@ -1085,12 +1314,19 @@ while running:
                                 red_card_obj = RedCard(center_x, center_y)
                                 red_card_spawned_this_half = True
 
+                        # SARI KART SPAWN (1-3 Kez)
+                        if yellow_cards_spawned_this_half < target_yellow_cards and not yellow_card_obj:
+                            if random.random() < 0.15 / (45 * 60) * 10:
+                                yellow_card_obj = YellowCard(center_x, center_y)
+                                yellow_cards_spawned_this_half += 1
+
                         if sim_minute >= 45:
                             display_added_time = True
                             if sim_minute >= 45 + added_time_1:
                                 state = "HALFTIME"
                                 halftime_timer = 0
                                 red_card_obj = None
+                                yellow_card_obj = None
                                 if half_whistle_sound: half_whistle_sound.play()
                         else:
                             display_added_time = False
@@ -1102,11 +1338,17 @@ while running:
                                 red_card_obj = RedCard(center_x, center_y)
                                 red_card_spawned_this_half = True
 
+                        # SARI KART SPAWN (1-3 Kez)
+                        if yellow_cards_spawned_this_half < target_yellow_cards and not yellow_card_obj:
+                            if random.random() < 0.15 / (45 * 60) * 10:
+                                yellow_card_obj = YellowCard(center_x, center_y)
+                                yellow_cards_spawned_this_half += 1
+
                         if sim_minute >= 90:
                             display_added_time = True
                             if sim_minute >= 90 + added_time_2:
                                 state = "FULLTIME"
-                                cinematic_timer = int(2.5 * FPS) # 2.5 saniyelik sinematik süre
+                                cinematic_timer = int(2.5 * FPS)
                                 end_match_timer = 0
                                 if end_whistle_sound: end_whistle_sound.play()
                         else:
@@ -1115,7 +1357,6 @@ while running:
             elif state == "FULLTIME":
                 if cinematic_timer > 0:
                     cinematic_timer -= 1
-                    # Sadece 4 frame'de 1 update çalıştırarak %25 ağır çekim hızı sağlıyoruz
                     if cinematic_timer % 3 == 0:
                         run_physics = True
 
@@ -1137,6 +1378,19 @@ while running:
                                 red_card_obj = None
                                 break
 
+                # SARI KART PHYSICS GÜNCELLEMELERİ
+                if yellow_card_obj and state != "FULLTIME":
+                    yellow_card_obj.update()
+                    if not yellow_card_obj.active: yellow_card_obj = None
+                    else:
+                        for b in [ball1, ball2]:
+                            if yellow_card_obj.check_collision(b):
+                                b.yellow_nerf_timer = 20 * FRAMES_PER_SIM_MINUTE # Yeni yavaşlatma değişkenini tetikler
+                                if b == ball1: yellow_cards_1 += 1
+                                else: yellow_cards_2 += 1
+                                yellow_card_obj = None
+                                break
+
                 (p1, p2, _, _) = calculate_goal_posts(center_x, center_y, ARENA_RADIUS, goal_angle, GOAL_WIDTH_RADIANS)
                 for b in [ball1, ball2]:
                     b.move()
@@ -1147,7 +1401,7 @@ while running:
                     if ball2.collide_wall(center_x, center_y, ARENA_RADIUS) and state != "FULLTIME": play_collision_sound()
                     if resolve_collisions(ball1, ball2) and state != "FULLTIME": play_collision_sound()
 
-                # GOL KONTROLÜ (Sadece maç devam ederken sayılır)
+                # GOL KONTROLÜ
                 if state != "FULLTIME":
                     for b in [ball1, ball2]:
                         dist = math.hypot(b.x - center_x, b.y - center_y)
@@ -1195,13 +1449,18 @@ while running:
                     frame_counter = 0
                     red_card_spawned_this_half = False
                     red_card_obj = None
+                    
+                    # Sarı Kart Devre Arası Sıfırlama
+                    yellow_cards_spawned_this_half = 0
+                    target_yellow_cards = random.randint(1, 3)
+                    yellow_card_obj = None
+                    
                     display_added_time = False
                     rx1, ry1 = get_random_spawn(center_x, center_y, ARENA_RADIUS)
                     rx2, ry2 = get_random_spawn(center_x, center_y, ARENA_RADIUS)
                     ball1.x, ball1.y = rx1, ry1
                     ball2.x, ball2.y = rx2, ry2
 
-            # Parçacıklar da sinematik sürede yavaşlıyor ve süre bitince donuyor
             if state == "FULLTIME":
                 if cinematic_timer > 0:
                     if cinematic_timer % 4 == 0:
@@ -1222,13 +1481,12 @@ while running:
             draw_real_goal(screen, center_x, center_y, ARENA_RADIUS, goal_angle, GOAL_WIDTH_RADIANS)
 
             if red_card_obj: red_card_obj.draw(screen)
+            if yellow_card_obj: yellow_card_obj.draw(screen) # Sarı Kart Saha Çizimi
 
             ball1.draw(screen)
             ball2.draw(screen)
 
             for p in particles: p.draw(screen)
-
-            # DELETED the draw_cinematic_vignette function to remove the black border
 
             panel_w, panel_h = 500, 105
             panel_x = WIDTH // 2 - panel_w // 2
@@ -1244,12 +1502,9 @@ while running:
                 lum0 = 0.299 * c0[0] + 0.587 * c0[1] + 0.114 * c0[2]
                 lum1 = 0.299 * c1[0] + 0.587 * c1[1] + 0.114 * c1[2]
 
-                # Eğer 2. renk çok parlaksa
                 if lum1 > 190:
-                    # 1. renk de parlaksa daha koyu olanı seç
                     if lum0 > 190:
                         return c0 if lum0 < lum1 else c1
-                    # 1. renk uygunsa onu seç
                     return c0
                 return c1
 
@@ -1259,29 +1514,41 @@ while running:
             t1_short = TEAMS[TEAM_NAMES[selected_home_idx]]["short"]
             t2_short = TEAMS[TEAM_NAMES[selected_away_idx]]["short"]
 
-            draw_text_with_outline(screen, t1_short, font_team, t1_txt_col, panel_x + 30, align_y - 30, "left", outline_col=WHITE)
-            draw_text_with_outline(screen, t2_short, font_team, t2_txt_col, panel_x + panel_w - 30, align_y - 30, "right", outline_col=WHITE)
+            # Skor tabelası UI kaydırmaları ve Sarı Kart dış dış çizimleri
+            draw_text_with_outline(screen, t1_short, font_team, t1_txt_col, panel_x + 75, align_y - 30, "left", outline_col=WHITE)
+            draw_text_with_outline(screen, t2_short, font_team, t2_txt_col, panel_x + panel_w - 75, align_y - 30, "right", outline_col=WHITE)
 
             t1_w, t1_h = font_team.size(t1_short)
             for rc in range(red_cards_1):
-                rc_x = panel_x + 30 + t1_w + 10 + rc * 15
+                rc_x = panel_x + 75 + t1_w + 10 + rc * 15
                 rc_y = align_y - 30 + t1_h // 2 - 8
                 pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
                 pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
 
+            for yc in range(yellow_cards_1):
+                yc_x = panel_x + 55 - (yc * 15)
+                yc_y = align_y - 30 + t1_h // 2 - 8
+                pygame.draw.rect(screen, (255, 220, 0), (yc_x, yc_y, 10, 16))
+                pygame.draw.rect(screen, WHITE, (yc_x, yc_y, 10, 16), 1)
+
             t2_w, t2_h = font_team.size(t2_short)
             for rc in range(red_cards_2):
-                rc_x = panel_x + panel_w - 30 - t2_w - 20 - rc * 15
+                rc_x = panel_x + panel_w - 75 - t2_w - 20 - rc * 15
                 rc_y = align_y - 30 + t2_h // 2 - 8
                 pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
                 pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
+
+            for yc in range(yellow_cards_2):
+                yc_x = panel_x + panel_w - 65 + (yc * 15)
+                yc_y = align_y - 30 + t2_h // 2 - 8
+                pygame.draw.rect(screen, (255, 220, 0), (yc_x, yc_y, 10, 16))
+                pygame.draw.rect(screen, WHITE, (yc_x, yc_y, 10, 16), 1)
 
             center_score_x = WIDTH // 2
             draw_text_with_outline(screen, str(score1), font_score, t1_txt_col, center_score_x - 50, align_y, outline_col=WHITE)
             draw_text_with_outline(screen, "-", font_score, BLACK, center_score_x, align_y, outline_col=WHITE)
             draw_text_with_outline(screen, str(score2), font_score, t2_txt_col, center_score_x + 50, align_y, outline_col=WHITE)
 
-            # UI için dakikayı her an güvenli bir şekilde hesaplayalım (NameError'ı çözer)
             ui_mins = frame_counter // FRAMES_PER_SIM_MINUTE
             ui_sim_minute = ui_mins if state == "FIRST_HALF" else (45 + ui_mins)
 
@@ -1302,7 +1569,6 @@ while running:
                 y_off = 130
                 recent_event = None
 
-                # Golcüleri isimlerine göre grupla
                 grouped_goals = {}
                 display_order = []
 
@@ -1321,7 +1587,6 @@ while running:
                         if t_str not in grouped_goals[scorer]:
                             grouped_goals[scorer].append(t_str)
 
-                # Taşan UI'ı engellemek için son 5 farklı oyuncuyu alıyoruz
                 visible_scorers = display_order[-5:]
 
                 for scorer in visible_scorers:
@@ -1362,7 +1627,6 @@ while running:
             elif state == "FULLTIME":
                 draw_text_with_outline(screen, "MAÇ SONU", font_event, WHITE, center_x, center_y, outline_col=BLACK)
 
-                # Sadece ağır çekim sinematiği bitince menü butonunu göster
                 if cinematic_timer <= 0:
                     end_match_timer += 1
                     if end_match_timer > 3 * FPS:
@@ -1380,7 +1644,6 @@ while running:
             shake_y = random.randint(-shake_intensity, shake_intensity)
             screen_shake_timer -= 1
 
-        # BACKDROP FOR SHAKE: Replaced BLACK with dark gray so edges don't flash black
         main_screen.fill((15, 15, 15))
         main_screen.blit(screen, (shake_x, shake_y))
 
