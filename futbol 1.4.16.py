@@ -4,7 +4,9 @@ import math
 import random
 import os
 
-# --- DİL AYARLARI ---
+# =====================================================================
+#                        1. LANGUAGE SETTINGS
+# =====================================================================
 current_lang = "TR"
 LANG = {
     "TR": {
@@ -54,7 +56,9 @@ LANG = {
 }
 lang_btn_rect = pygame.Rect(20, 20, 60, 40)
 
-# --- CONFIGURATION ---
+# =====================================================================
+#                        2. SCREEN & GAME CONFIGURATION
+# =====================================================================
 WIDTH, HEIGHT = 800, 800
 FPS = 80
 FRAMES_PER_SIM_MINUTE = 26
@@ -68,35 +72,49 @@ GOAL_DEPTH = 52
 SPEED = 5.5
 MIN_SPEED = 4.0
 
-# PHYSICS CONSTANTS
+# =====================================================================
+#                        3. PHYSICS CONSTANTS
+# =====================================================================
 GRAVITY = 0.025
 BOUNCE_DAMPING = 0.95
 FRICTION = 0.999
 ELASTICITY = 1.01
 POST_ELASTICITY = 1.04
 
-# COLORS
-GRASS_1 = (50, 160, 50)
-GRASS_2 = (40, 140, 40)
+# =====================================================================
+#                        4. BRAND & GAME COLORS
+# =====================================================================
+NAVY = (0, 33, 71)          # Main brand Navy (Pitch, backgrounds)
+NAVY_LIGHT = (0, 45, 95)    # Slightly lighter Navy for pitch stripes
+NAVY_DARK = (0, 20, 50)     # Darker Navy for UI Backgrounds
+CREAM = (255, 253, 218)     # Main brand Cream (UI text, borders, outer arena edge)
+BURNT_ORANGE = (204, 85, 0) # Accent 1 (Selections, buttons)
+TERRACOTTA = (226, 114, 91) # Accent 2 (Menu Titles, Goal messages)
+
+# Specific UI / Environment color assignments
+GRASS_1 = NAVY
+GRASS_2 = NAVY_LIGHT
+MENU_BG = NAVY_DARK
+SELECTED_COLOR = BURNT_ORANGE
+SCROLLBAR_BG = NAVY
+SCROLLBAR_HANDLE = CREAM
+OVERLAY_BG = (0, 20, 50, 200)
+TABLE_BG = (0, 20, 50, 230)
+
+# Exempted Core Colors (Specifically preserved for elements like goal frame, timer, etc)
 WHITE = (245, 245, 245)
 BLACK = (10, 10, 10)
 NET_COLOR = (200, 200, 200)
-GOLD = (255, 215, 0)
-MENU_BG = (25, 25, 25)
-SELECTED_COLOR = (50, 255, 50)
-SCROLLBAR_BG = (50, 50, 60)
-SCROLLBAR_HANDLE = (150, 150, 150)
-RED_CARD_COLOR = (250, 10, 10)
-OVERLAY_BG = (20, 20, 20, 200)
-TABLE_BG = (35, 35, 35, 230)
 POST_INNER_COLOR = (50, 50, 50)
+RED_CARD_COLOR = (250, 10, 10)
 SHADOW_COLOR = (0, 0, 0, 80)
 
-# --- SES AYARLARI ---
+# =====================================================================
+#                        5. AUDIO & SOUNDS
+# =====================================================================
 STADIUM_SOUND = "stadium.mp3"
 COLLISION_FILE = "collision1.wav"
 
-# DÜDÜK DOSYALARI
 START_WHISTLE_FILE = "baş.mp3"
 HALF_WHISTLE_FILE = "orta.mp3"
 END_WHISTLE_FILE = "son.mp3"
@@ -119,7 +137,10 @@ vol_settings = {
     "whistle": 0.4
 }
 
-# --- TAKIM VERİTABANI ---
+# =====================================================================
+#                        6. TEAM DATABASE & LOGOS
+# =====================================================================
+# Team database is excluded from color overrides to maintain real team colors
 TEAMS = {
     "GALATASARAY":    {"colors": [(169, 4, 50), (253, 185, 18)], "short": "GS"},
     "FENERBAHÇE":     {"colors": [(255, 255, 0), (0, 0, 128)],   "short": "FB"},
@@ -229,12 +250,96 @@ TEAMS = {
     "TORINO":         {"colors": [(138, 30, 50), (255, 255, 255)], "short": "TOR"},
     "UDINESE":        {"colors": [(0, 0, 0), (255, 255, 255)],     "short": "UDI"},
     "VERONA":         {"colors": [(0, 51, 102), (255, 204, 0)],    "short": "VER"},
+    # --- LA LIGA (NEW) ---
+    "ATHLETIC CLUB":  {"colors": [(237, 28, 36), (255, 255, 255)], "short": "ATH"},
+    "REAL SOCIEDAD":  {"colors": [(0, 103, 177), (255, 255, 255)], "short": "RSO"},
+    "VILLARREAL":     {"colors": [(255, 230, 0), (0, 0, 102)],     "short": "VIL"},
+    "VALENCIA":       {"colors": [(255, 255, 255), (0, 0, 0)],     "short": "VAL"},
+    "SEVILLA":        {"colors": [(255, 255, 255), (218, 41, 28)], "short": "SEV"},
+    "REAL BETIS":     {"colors": [(0, 148, 72), (255, 255, 255)],  "short": "BET"},
+    "OSASUNA":        {"colors": [(193, 29, 39), (0, 27, 73)],     "short": "OSA"},
+    "MALLORCA":       {"colors": [(226, 0, 26), (0, 0, 0)],        "short": "MLL"},
+    "ALAVES":         {"colors": [(0, 68, 148), (255, 255, 255)],  "short": "ALA"},
+    "RAYO VALLECANO": {"colors": [(255, 255, 255), (227, 6, 19)],  "short": "RAY"},
+    "GETAFE":         {"colors": [(0, 75, 151), (255, 255, 255)],  "short": "GET"},
+    "ESPANYOL":       {"colors": [(0, 122, 195), (255, 255, 255)], "short": "ESP"},
+    "ELCHE":          {"colors": [(0, 100, 0), (255, 255, 255)],   "short": "ELC"},
+    "OVIEDO":         {"colors": [(0, 51, 160), (255, 255, 255)],  "short": "OVI"},
+    "LEVANTE":        {"colors": [(0, 51, 102), (153, 0, 51)],     "short": "LEV"},
+
+    # --- LIGUE 1 (NEW) ---
+    "MARSEILLE":      {"colors": [(255, 255, 255), (0, 150, 214)], "short": "OM"},
+    "LYON":           {"colors": [(255, 255, 255), (218, 41, 28)], "short": "OL"},
+    "LENS":           {"colors": [(237, 28, 36), (255, 215, 0)],   "short": "RCL"},
+    "NICE":           {"colors": [(218, 41, 28), (0, 0, 0)],       "short": "NIC"},
+    "RENNES":         {"colors": [(227, 34, 25), (0, 0, 0)],       "short": "REN"},
+    "STRASBOURG":     {"colors": [(0, 82, 159), (255, 255, 255)],  "short": "STR"},
+    "REIMS":          {"colors": [(226, 0, 26), (255, 255, 255)],  "short": "SDR"},
+    "TOULOUSE":       {"colors": [(92, 45, 145), (255, 255, 255)], "short": "TFC"},
+    "NANTES":         {"colors": [(253, 233, 34), (0, 100, 50)],   "short": "FCN"},
+    "MONTPELLIER":    {"colors": [(0, 35, 96), (243, 108, 33)],    "short": "MHS"},
+    "ANGERS":         {"colors": [(0, 0, 0), (255, 255, 255)],     "short": "SCO"},
+    "BREST":          {"colors": [(226, 0, 26), (255, 255, 255)],  "short": "SB2"},
+    "LE HAVRE":       {"colors": [(111, 172, 222), (0, 31, 73)],   "short": "HAC"},
+    "AUXERRE":        {"colors": [(255, 255, 255), (0, 68, 148)],  "short": "AJA"},
+    "SAINT-ETIENNE":  {"colors": [(0, 102, 51), (255, 255, 255)],  "short": "ASE"},
+
+    # --- MLS (NEW) ---
+    "INTER MIAMI":    {"colors": [(244, 181, 205), (0, 0, 0)],     "short": "MIA"},
+    "LAFC":           {"colors": [(0, 0, 0), (195, 158, 109)],     "short": "LAF"},
+    "LA GALAXY":      {"colors": [(0, 36, 93), (255, 210, 0)],     "short": "LAG"},
+    "COLUMBUS CREW":  {"colors": [(255, 223, 0), (0, 0, 0)],       "short": "CCW"},
+    "FC CINCINNATI":  {"colors": [(240, 83, 35), (38, 59, 128)],   "short": "CIN"},
+    "SEATTLE SOUNDERS":{"colors": [(93, 151, 50), (0, 85, 149)],   "short": "SEA"},
+    "NEW YORK CITY FC":{"colors": [(108, 172, 228), (4, 30, 66)],  "short": "NYC"},
+    "NY RED BULLS":   {"colors": [(226, 24, 54), (255, 255, 255)], "short": "NYR"},
+    "ATLANTA UTD":    {"colors": [(128, 0, 0), (0, 0, 0)],         "short": "ATL"},
+    "PORTLAND TIMBERS":{"colors": [(0, 72, 39), (234, 170, 0)],    "short": "PTL"},
+    "ORLANDO CITY":   {"colors": [(99, 52, 146), (255, 255, 255)], "short": "ORL"},
+    "HOUSTON DYNAMO": {"colors": [(255, 107, 0), (0, 0, 0)],       "short": "HOU"},
+    "REAL SALT LAKE": {"colors": [(179, 11, 34), (1, 31, 91)],     "short": "RSL"},
+    "PHILADELPHIA U.":{"colors": [(0, 45, 85), (179, 163, 105)],   "short": "PHI"},
+    "SPORTING KC":    {"colors": [(145, 176, 213), (0, 42, 92)],   "short": "SKC"},
+    "NEW ENGLAND REV":{"colors": [(226, 24, 54), (0, 43, 92)],     "short": "NER"},
+    "NASHVILLE SC":   {"colors": [(236, 232, 58), (31, 22, 70)],   "short": "NSC"},
+    "FC DALLAS":      {"colors": [(226, 24, 54), (0, 62, 126)],    "short": "DAL"},
+    "VANCOUVER WC":   {"colors": [(0, 36, 94), (255, 255, 255)],   "short": "VAN"},
+    "MINNESOTA UTD":  {"colors": [(135, 142, 144), (122, 184, 237)],"short": "MIN"},
+    "COLORADO RAPIDS":{"colors": [(134, 38, 51), (139, 171, 204)], "short": "COL"},
+    "CHARLOTTE FC":   {"colors": [(0, 133, 202), (0, 0, 0)],       "short": "CHR"},
+    "SAN JOSE EQ":    {"colors": [(0, 0, 0), (0, 81, 186)],        "short": "SJE"},
+    "AUSTIN FC":      {"colors": [(0, 180, 81), (0, 0, 0)],        "short": "AUS"},
+    "CHICAGO FIRE":   {"colors": [(255, 0, 0), (0, 42, 92)],       "short": "CHI"},
+    "D.C. UNITED":    {"colors": [(0, 0, 0), (239, 62, 66)],       "short": "DCU"},
+    "CF MONTREAL":    {"colors": [(0, 51, 160), (0, 0, 0)],        "short": "MTL"},
+    "ST. LOUIS CITY": {"colors": [(226, 24, 54), (0, 43, 92)],     "short": "STL"},
+    "TORONTO FC":     {"colors": [(227, 38, 54), (32, 42, 68)],    "short": "TFC"},
+    "SAN DIEGO FC":   {"colors": [(0, 193, 213), (0, 0, 0)],       "short": "SDF"},
+
+    # --- SAUDI PRO LEAGUE (NEW) ---
+    "AL HILAL":       {"colors": [(0, 94, 184), (255, 255, 255)],  "short": "HIL"},
+    "AL NASSR":       {"colors": [(254, 209, 65), (0, 52, 120)],   "short": "NAS"},
+    "AL AHLI":        {"colors": [(0, 166, 81), (255, 255, 255)],  "short": "AHL"},
+    "AL ITTIHAD":     {"colors": [(255, 215, 0), (0, 0, 0)],       "short": "ITT"},
+    "AL SHABAB":      {"colors": [(255, 255, 255), (0, 0, 0)],     "short": "SHA"},
+    "AL TAAWOUN":     {"colors": [(255, 215, 0), (0, 51, 153)],    "short": "TAA"},
+    "AL ETTIFAQ":     {"colors": [(0, 128, 64), (255, 255, 255)],  "short": "ETT"},
+    "DAMAC":          {"colors": [(255, 0, 0), (255, 215, 0)],     "short": "DAM"},
+    "AL FAYHA":       {"colors": [(255, 165, 0), (0, 0, 255)],     "short": "FAY"},
+    "AL FATEH":       {"colors": [(0, 100, 0), (255, 255, 255)],   "short": "FAT"},
+    "AL RIYADH":      {"colors": [(255, 0, 0), (0, 0, 0)],         "short": "RIY"},
+    "AL WEHDA":       {"colors": [(255, 0, 0), (255, 255, 255)],   "short": "WEH"},
+    "AL KHALEEJ":     {"colors": [(255, 255, 0), (0, 128, 0)],     "short": "KHA"},
+    "AL RAED":        {"colors": [(255, 0, 0), (0, 0, 0)],         "short": "RAE"},
+    "AL QADSIAH":     {"colors": [(255, 0, 0), (255, 255, 0)],     "short": "QAD"},
+    "AL OKHDOOD":     {"colors": [(0, 191, 255), (255, 255, 255)], "short": "OKH"},
+    "NEOM SC":        {"colors": [(0, 0, 139), (255, 215, 0)],     "short": "NEO"},
+    "AL KHOLOOD":     {"colors": [(255, 0, 0), (255, 255, 255)],   "short": "KHO"},
 }
 
 TEAM_NAMES = sorted(list(TEAMS.keys()))
 PLAYER_DATABASE = {}
 
-# --- ARAMA ÇUBUĞU DEĞİŞKENLERİ ---
 search_text = ""
 search_active = False
 
@@ -267,7 +372,9 @@ def get_random_player_name(team_key):
             return random.choice(players)
     return f"{LANG[current_lang]['PLAYER']} {random.randint(1, 3)}"
 
-# --- SETUP ---
+# =====================================================================
+#                        7. PYGAME SETUP & SOUND INIT
+# =====================================================================
 pygame.init()
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=4096)
 pygame.mixer.set_num_channels(8)
@@ -353,7 +460,9 @@ if goal_sounds["GOAL3"]: general_pool.append(goal_sounds["GOAL3"])
 
 apply_volumes()
 
-# --------- LOGO YÜKLEME KISMI ---------
+# =====================================================================
+#                        8. LOGO LOADING
+# =====================================================================
 TEAM_LOGOS = {}
 logo_size = BALL_RADIUS * 3 * 2
 
@@ -426,10 +535,32 @@ LOGO_FILES_IT = {
     "UDI": "udinese.png",
     "VER": "verona.png"
 }
+# İSPANYOL TAKIMLARI (imagesSP klasörü)
+LOGO_FILES_SP = {
+    "ALA": "alaves.png",
+    "ATH": "athleticbilbao.png",
+    "ATM": "atleticomadrid.png",
+    "BAR": "barcelona.png",
+    "CEL": "celtavigo.png",
+    "ELC": "elche.png",
+    "ESP": "espanyol.png",
+    "GET": "getafe.png",
+    "GIR": "girona.png",
+    "LEV": "levante.png",
+    "MLL": "mallorca.png",
+    "OSA": "osasuna.png",
+    "RAY": "rayovallecano.png",
+    "BET": "realbetis.png",
+    "RMA": "realmadrid.png",
+    "OVI": "realoviedo.png",
+    "RSO": "realsociedad.png",
+    "SEV": "sevilla.png",
+    "VAL": "valencia.png",
+    "VIL": "villereal.png"
+}
 
 def load_and_format_logo(filepath, target_size, padding_factor=0.75):
     if not os.path.exists(filepath):
-        print(f"HATA - Logo Bulunamadı: {filepath}")
         return None
     try:
         img = pygame.image.load(filepath).convert_alpha()
@@ -444,7 +575,6 @@ def load_and_format_logo(filepath, target_size, padding_factor=0.75):
         final_surf.blit(scaled_img, (x_offset, y_offset))
         return final_surf
     except Exception as e:
-        print(f"HATA - Logo Bozuk ({filepath}): {e}")
         return None
 
 for team_short, filename in LOGO_FILES.items():
@@ -466,7 +596,14 @@ for team_short, filename in LOGO_FILES_IT.items():
     file_path = get_safe_path("imagesIT", filename)
     formatted_logo = load_and_format_logo(file_path, logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
-# ----------------------------------------
+
+for team_short, filename in LOGO_FILES_SP.items():
+    file_path = get_safe_path("imagesSP", filename)
+    formatted_logo = load_and_format_logo(file_path, logo_size)
+    if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
+# =====================================================================
+#                        9. FONTS & UI HELPERS
+# =====================================================================
 font_score = pygame.font.SysFont("impact", 54)
 font_timer = pygame.font.SysFont("impact", 26)
 font_event = pygame.font.SysFont("impact", 50)
@@ -483,6 +620,40 @@ clock = pygame.time.Clock()
 def draw_cinematic_vignette(surface):
     pygame.draw.rect(surface, (0,0,0), (0,0,WIDTH,HEIGHT), 20)
 
+def get_readable_color(colors):
+    c0 = colors[0]
+    c1 = colors[1]
+    lum0 = 0.299 * c0[0] + 0.587 * c0[1] + 0.114 * c0[2]
+    lum1 = 0.299 * c1[0] + 0.587 * c1[1] + 0.114 * c1[2]
+
+    if lum1 > 190:
+        if lum0 > 190:
+            return c0 if lum0 < lum1 else c1
+        return c0
+    return c1
+
+def get_outline_color(c):
+    lum = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
+    return WHITE if lum < 100 else BLACK
+
+def draw_text_with_outline(surface, text, font, color, x, y, align="center", outline_col=BLACK):
+    offsets = [(-2, -2), (-2, 2), (2, -2), (2, 2), (-2, 0), (2, 0), (0, -2), (0, 2)]
+    for ox, oy in offsets:
+        surf = font.render(text, True, outline_col)
+        if align == "center": rect = surf.get_rect(center=(x + ox, y + oy))
+        elif align == "right": rect = surf.get_rect(topright=(x + ox, y + oy))
+        else: rect = surf.get_rect(topleft=(x + ox, y + oy))
+        surface.blit(surf, rect)
+
+    surf = font.render(text, True, color)
+    if align == "center": rect = surf.get_rect(center=(x, y))
+    elif align == "right": rect = surf.get_rect(topright=(x, y))
+    else: rect = surf.get_rect(topleft=(x, y))
+    surface.blit(surf, rect)
+
+# =====================================================================
+#                     10. CORE DRAWING FUNCTIONS (PITCH)
+# =====================================================================
 def draw_striped_pitch(surface, cx, cy, radius):
     pygame.draw.circle(surface, GRASS_1, (cx, cy), radius)
     stripe_surf = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
@@ -490,39 +661,32 @@ def draw_striped_pitch(surface, cx, cy, radius):
         pygame.draw.rect(stripe_surf, GRASS_2, (0, i, radius*2, 30))
     mask_surf = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
     pygame.draw.circle(mask_surf, (255, 255, 255, 255), (radius, radius), radius)
-
     pygame.gfxdraw.aacircle(mask_surf, radius, radius, radius, (255, 255, 255, 255))
-
     stripe_surf.blit(mask_surf, (0,0), special_flags=pygame.BLEND_RGBA_MIN)
     surface.blit(stripe_surf, (cx - radius, cy - radius))
 
-    for angle in range(0, 360):
-        rad_start = math.radians(angle)
-        rad_end = math.radians(angle + 1.5)
-        color = pygame.Color(0)
-        color.hsla = (angle % 360, 100, 50, 100)
+    pad = 10
 
-        start_pos = (cx + math.cos(rad_start) * radius, cy + math.sin(rad_start) * radius)
-        end_pos = (cx + math.cos(rad_end) * radius, cy + math.sin(rad_end) * radius)
-        pygame.draw.line(surface, color, start_pos, end_pos, 6)
+    if not hasattr(draw_striped_pitch, "cached_lines"):
+        scale = 4
+        surf_size = (radius + pad) * 2 * scale
+        c_hr = surf_size // 2
 
-        out_s = (cx + math.cos(rad_start) * (radius + 3), cy + math.sin(rad_start) * (radius + 3))
-        out_e = (cx + math.cos(rad_end) * (radius + 3), cy + math.sin(rad_end) * (radius + 3))
-        pygame.draw.aaline(surface, color, out_s, out_e)
+        lines_surf_hires = pygame.Surface((surf_size, surf_size), pygame.SRCALPHA)
 
-        in_s = (cx + math.cos(rad_start) * (radius - 3), cy + math.sin(rad_start) * (radius - 3))
-        in_e = (cx + math.cos(rad_end) * (radius - 3), cy + math.sin(rad_end) * (radius - 3))
-        pygame.draw.aaline(surface, color, in_s, in_e)
+        pygame.draw.circle(lines_surf_hires, CREAM, (c_hr, c_hr), radius * scale, 6 * scale)
 
-    line_start = (cx - radius + 20, cy)
-    line_end = (cx + radius - 20, cy)
-    pygame.draw.line(surface, WHITE, line_start, line_end, 4)
-    pygame.draw.aaline(surface, WHITE, (line_start[0], cy - 2), (line_end[0], cy - 2))
-    pygame.draw.aaline(surface, WHITE, (line_start[0], cy + 1), (line_end[0], cy + 1))
+        line_len = radius - 20
+        start_x = c_hr - line_len * scale
+        end_x = c_hr + line_len * scale
+        pygame.draw.line(lines_surf_hires, WHITE, (start_x, c_hr), (end_x, c_hr), 4 * scale)
 
-    pygame.draw.circle(surface, WHITE, (cx, cy), 50, 4)
-    pygame.gfxdraw.aacircle(surface, cx, cy, 50, WHITE)
-    pygame.gfxdraw.aacircle(surface, cx, cy, 47, WHITE)
+        pygame.draw.circle(lines_surf_hires, WHITE, (c_hr, c_hr), 50 * scale, 4 * scale)
+
+        target_size = (radius + pad) * 2
+        draw_striped_pitch.cached_lines = pygame.transform.smoothscale(lines_surf_hires, (target_size, target_size))
+
+    surface.blit(draw_striped_pitch.cached_lines, (cx - radius - pad, cy - radius - pad))
 
 def calculate_goal_posts(cx, cy, radius, angle, width_rad):
     INWARD_OFFSET = 22
@@ -623,6 +787,9 @@ def get_random_spawn(cx, cy, r_limit):
         if dist < r_limit - BALL_RADIUS - 10:
             return rx, ry
 
+# =====================================================================
+#                     11. IN-GAME CLASSES (PARTICLES, BALL, CARDS)
+# =====================================================================
 class Particle:
     def __init__(self, x, y, color):
         self.x = x
@@ -960,18 +1127,24 @@ class RedCard:
             return True
         return False
 
-# GLOBAL GAME VARIABLES
+# =====================================================================
+#                     12. GLOBAL GAME STATE VARIABLES
+# =====================================================================
 center_x, center_y = WIDTH // 2, HEIGHT // 2 + 40
 score1, score2 = 0, 0
 goal_angle = 1 * math.pi / 2
 goal_rotating = False
 goal_rot_speed = 0.015
 goll_timer = 0
-goal_text_color = GOLD
+goal_text_color = TERRACOTTA
 goal_events_1 = []
 goal_events_2 = []
 state = "MENU"
 frame_counter = 0
+
+intro_timer = 0
+home_full_name = ""
+away_full_name = ""
 
 screen_shake_timer = 0
 
@@ -1012,25 +1185,6 @@ goal_sound_channel = None
 red_cards_1 = 0
 red_cards_2 = 0
 
-def get_outline_color(c):
-    lum = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
-    return WHITE if lum < 100 else BLACK
-
-def draw_text_with_outline(surface, text, font, color, x, y, align="center", outline_col=BLACK):
-    offsets = [(-2, -2), (-2, 2), (2, -2), (2, 2), (-2, 0), (2, 0), (0, -2), (0, 2)]
-    for ox, oy in offsets:
-        surf = font.render(text, True, outline_col)
-        if align == "center": rect = surf.get_rect(center=(x + ox, y + oy))
-        elif align == "right": rect = surf.get_rect(topright=(x + ox, y + oy))
-        else: rect = surf.get_rect(topleft=(x + ox, y + oy))
-        surface.blit(surf, rect)
-
-    surf = font.render(text, True, color)
-    if align == "center": rect = surf.get_rect(center=(x, y))
-    elif align == "right": rect = surf.get_rect(topright=(x, y))
-    else: rect = surf.get_rect(topleft=(x, y))
-    surface.blit(surf, rect)
-
 def play_goal_music_for_team(team_short_name):
     global goal_sound_channel
     if goal_sound_channel and goal_sound_channel.get_busy(): goal_sound_channel.stop()
@@ -1057,6 +1211,7 @@ def start_match():
     global red_card_obj, red_card_spawned_this_half, halftime_timer, particles, screen_shake_timer
     global goal_angle, added_time_1, added_time_2, start_delay_timer, cinematic_timer, red_cards_1, red_cards_2
     global yellow_card_obj, yellow_cards_1, yellow_cards_2, yellow_cards_spawned_this_half, target_yellow_cards
+    global intro_timer, home_full_name, away_full_name
 
     score1, score2 = 0, 0
     goal_events_1 = []
@@ -1087,6 +1242,9 @@ def start_match():
     home_key = TEAM_NAMES[selected_home_idx]
     away_key = TEAM_NAMES[selected_away_idx]
 
+    home_full_name = home_key
+    away_full_name = away_key
+
     team1_name = TEAMS[home_key]["short"]
     team2_name = TEAMS[away_key]["short"]
     team1_colors = TEAMS[home_key]["colors"]
@@ -1109,12 +1267,17 @@ def start_match():
     if stadium_music_loaded:
         pygame.mixer.music.play(-1)
 
+    intro_timer = int(1.0 * FPS)
     start_delay_timer = int(0.5 * FPS)
     cinematic_timer = 0
-    state = "FIRST_HALF"
+    state = "INTRO"
 
+# =====================================================================
+#                     13. MAIN GAME LOOP
+# =====================================================================
 running = True
 while running:
+    # --- EVENT HANDLING ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -1242,32 +1405,33 @@ while running:
                         if goal_sound_channel: goal_sound_channel.stop()
                         if stadium_music_loaded: pygame.mixer.music.stop()
 
+    # --- GAME LOGIC & DRAWING ---
     if not paused:
         if state == "MENU":
             screen.fill(MENU_BG)
 
             pygame.draw.rect(screen, SCROLLBAR_BG, lang_btn_rect, border_radius=5)
-            pygame.draw.rect(screen, WHITE, lang_btn_rect, 2, border_radius=5)
-            lang_txt = font_menu_item.render(LANG[current_lang]["LANG_BTN"], True, WHITE)
+            pygame.draw.rect(screen, CREAM, lang_btn_rect, 2, border_radius=5)
+            lang_txt = font_menu_item.render(LANG[current_lang]["LANG_BTN"], True, CREAM)
             screen.blit(lang_txt, lang_txt.get_rect(center=lang_btn_rect.center))
 
-            title = font_menu_title.render(LANG[current_lang]["TEAM_SELECTION"], True, GOLD)
+            title = font_menu_title.render(LANG[current_lang]["TEAM_SELECTION"], True, TERRACOTTA)
             screen.blit(title, (275 - title.get_width()//2, 20))
 
-            settings_title = font_menu_title.render(LANG[current_lang]["SETTINGS"], True, GOLD)
+            settings_title = font_menu_title.render(LANG[current_lang]["SETTINGS"], True, TERRACOTTA)
             screen.blit(settings_title, (670 - settings_title.get_width()//2, 20))
 
-            home_header = font_team.render(LANG[current_lang]["HOME"], True, WHITE)
+            home_header = font_team.render(LANG[current_lang]["HOME"], True, CREAM)
             screen.blit(home_header, (50, 68))
-            away_header = font_team.render(LANG[current_lang]["AWAY"], True, WHITE)
+            away_header = font_team.render(LANG[current_lang]["AWAY"], True, CREAM)
             screen.blit(away_header, (300, 68))
 
             search_rect = pygame.Rect(50, 110, 470, 30)
-            pygame.draw.rect(screen, SCROLLBAR_BG if not search_active else (60, 60, 75), search_rect, border_radius=5)
-            pygame.draw.rect(screen, WHITE if search_active else SCROLLBAR_HANDLE, search_rect, 2, border_radius=5)
+            pygame.draw.rect(screen, SCROLLBAR_BG if not search_active else NAVY_LIGHT, search_rect, border_radius=5)
+            pygame.draw.rect(screen, CREAM if search_active else SCROLLBAR_HANDLE, search_rect, 2, border_radius=5)
 
             prompt_text = search_text if search_text else LANG[current_lang]["SEARCH"]
-            txt_color = WHITE if search_text else (150, 150, 150)
+            txt_color = CREAM if search_text else (150, 150, 150)
             search_surf = font_settings.render(prompt_text, True, txt_color)
             screen.blit(search_surf, (60, 115))
 
@@ -1279,10 +1443,10 @@ while running:
                 orig_idx = TEAM_NAMES.index(name)
                 item_y = 150 + i * 40 + menu_scroll_y
                 if item_y < 130 or item_y > HEIGHT - 100: continue
-                col = SELECTED_COLOR if orig_idx == selected_home_idx else WHITE
+                col = SELECTED_COLOR if orig_idx == selected_home_idx else CREAM
                 name_surf = font_menu_item.render(name, True, col)
                 screen.blit(name_surf, (50, item_y))
-                col = SELECTED_COLOR if orig_idx == selected_away_idx else WHITE
+                col = SELECTED_COLOR if orig_idx == selected_away_idx else CREAM
                 name_surf = font_menu_item.render(name, True, col)
                 screen.blit(name_surf, (300, item_y))
             screen.set_clip(None)
@@ -1312,29 +1476,35 @@ while running:
                       "WHISTLE": LANG[current_lang]["LBL_WHISTLE"]}
 
             for key, rect in slider_rects.items():
-                lbl = font_settings.render(labels[key], True, WHITE)
+                lbl = font_settings.render(labels[key], True, CREAM)
                 screen.blit(lbl, (rect.x, rect.y - 30))
                 pygame.draw.rect(screen, SCROLLBAR_BG, rect, border_radius=5)
                 val = master_vol if key == "MASTER" else vol_settings[key.lower()]
                 fill_rect = pygame.Rect(rect.x, rect.y, rect.width * val, rect.height)
                 pygame.draw.rect(screen, SELECTED_COLOR, fill_rect, border_radius=5)
                 handle_rect = pygame.Rect(rect.x + rect.width * val - 10, rect.y - 10, 20, 30)
-                pygame.draw.rect(screen, WHITE, handle_rect, border_radius=5)
+                pygame.draw.rect(screen, CREAM, handle_rect, border_radius=5)
 
             pygame.draw.rect(screen, MENU_BG, (0, HEIGHT-110, WIDTH, 110))
 
             btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
             pygame.draw.rect(screen, GRASS_1, btn_rect, border_radius=15)
-            pygame.draw.rect(screen, WHITE, btn_rect, 3, border_radius=15)
-            btn_txt = font_menu_title.render(LANG[current_lang]["START_MATCH"], True, WHITE)
+            pygame.draw.rect(screen, CREAM, btn_rect, 3, border_radius=15)
+            btn_txt = font_menu_title.render(LANG[current_lang]["START_MATCH"], True, CREAM)
             btn_txt_rect = btn_txt.get_rect(center=btn_rect.center)
             screen.blit(btn_txt, btn_txt_rect)
 
-        elif state in ["FIRST_HALF", "SECOND_HALF", "HALFTIME", "FULLTIME"]:
+        elif state in ["INTRO", "FIRST_HALF", "SECOND_HALF", "HALFTIME", "FULLTIME"]:
 
             run_physics = False
 
-            if state in ["FIRST_HALF", "SECOND_HALF"]:
+            if state == "INTRO":
+                if intro_timer > 0:
+                    intro_timer -= 1
+                    if intro_timer <= 0:
+                        state = "FIRST_HALF"
+
+            elif state in ["FIRST_HALF", "SECOND_HALF"]:
                 if start_delay_timer > 0:
                     start_delay_timer -= 1
                     if start_delay_timer == 0 and state == "FIRST_HALF":
@@ -1347,7 +1517,7 @@ while running:
                     if state == "FIRST_HALF":
                         sim_minute = total_mins_played
                         if not red_card_spawned_this_half and not red_card_obj:
-                            if random.random() < 0.05 / (45 * 60) * 10:
+                            if random.random() < 0.03 / (45 * 60) * 10:
                                 red_card_obj = RedCard(center_x, center_y)
                                 red_card_spawned_this_half = True
 
@@ -1370,7 +1540,7 @@ while running:
                     elif state == "SECOND_HALF":
                         sim_minute = 45 + total_mins_played
                         if not red_card_spawned_this_half and not red_card_obj:
-                            if random.random() < 0.2 / (45 * 60) * 10:
+                            if random.random() < 0.15 / (45 * 60) * 10:
                                 red_card_obj = RedCard(center_x, center_y)
                                 red_card_spawned_this_half = True
 
@@ -1504,7 +1674,7 @@ while running:
                     p.update()
                     if p.life <= 0: particles.remove(p)
 
-            screen.fill((15, 15, 15))
+            screen.fill(NAVY_DARK)
             draw_striped_pitch(screen, center_x, center_y, ARENA_RADIUS)
 
             for dot in crowd:
@@ -1520,153 +1690,177 @@ while running:
 
             for p in particles: p.draw(screen)
 
-            panel_w, panel_h = 500, 105
-            panel_x = WIDTH // 2 - panel_w // 2
-            table_surf = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
-            pygame.draw.rect(table_surf, TABLE_BG, (0, 0, panel_w, panel_h), border_radius=15)
-            screen.blit(table_surf, (panel_x, 20))
-            pygame.draw.rect(screen, WHITE, (panel_x, 20, panel_w, panel_h), 2, border_radius=15)
+            # --- YENİ: İNTRO VEYA UI ÇİZİMİ ---
+            if state == "INTRO":
+                total_frames = int(2.0 * FPS)
+                fade_frames = int(0.2 * FPS)
 
-            align_y = 72
-            def get_readable_color(colors):
-                c0 = colors[0]
-                c1 = colors[1]
-                lum0 = 0.299 * c0[0] + 0.587 * c0[1] + 0.114 * c0[2]
-                lum1 = 0.299 * c1[0] + 0.587 * c1[1] + 0.114 * c1[2]
+                alpha = 255
+                frames_played = total_frames - intro_timer
 
-                if lum1 > 190:
-                    if lum0 > 190:
-                        return c0 if lum0 < lum1 else c1
-                    return c0
-                return c1
+                if frames_played < fade_frames:
+                    alpha = int((frames_played / fade_frames) * 255)
+                elif intro_timer < fade_frames:
+                    alpha = int((intro_timer / fade_frames) * 255)
 
-            t1_txt_col = get_readable_color(team1_colors)
-            t2_txt_col = get_readable_color(team2_colors)
+                intro_surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
-            t1_short = TEAMS[TEAM_NAMES[selected_home_idx]]["short"]
-            t2_short = TEAMS[TEAM_NAMES[selected_away_idx]]["short"]
+                def draw_alpha_text(surf, text, font, color, x, y, outline_col):
+                    offsets = [(-2, -2), (-2, 2), (2, -2), (2, 2), (-2, 0), (2, 0), (0, -2), (0, 2)]
+                    for ox, oy in offsets:
+                        s = font.render(text, True, outline_col)
+                        surf.blit(s, s.get_rect(center=(x + ox, y + oy)))
+                    s = font.render(text, True, color)
+                    surf.blit(s, s.get_rect(center=(x, y)))
 
-            draw_text_with_outline(screen, t1_short, font_team, t1_txt_col, panel_x + 75, align_y - 30, "left", outline_col=WHITE)
-            draw_text_with_outline(screen, t2_short, font_team, t2_txt_col, panel_x + panel_w - 75, align_y - 30, "right", outline_col=WHITE)
+                c1 = get_readable_color(team1_colors)
+                c2 = get_readable_color(team2_colors)
 
-            t1_w, t1_h = font_team.size(t1_short)
-            for rc in range(red_cards_1):
-                rc_x = panel_x + 75 + t1_w + 10 + rc * 15
-                rc_y = align_y - 30 + t1_h // 2 - 8
-                pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
-                pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
+                draw_alpha_text(intro_surf, home_full_name, font_team, c1, center_x, center_y - 45, WHITE)
+                draw_alpha_text(intro_surf, "VS", font_score, WHITE, center_x, center_y + 5, NAVY_DARK)
+                draw_alpha_text(intro_surf, away_full_name, font_team, c2, center_x, center_y + 55, WHITE)
 
-            for yc in range(yellow_cards_1):
-                yc_x = panel_x + 55 - (yc * 15)
-                yc_y = align_y - 30 + t1_h // 2 - 8
-                pygame.draw.rect(screen, (255, 220, 0), (yc_x, yc_y, 10, 16))
-                pygame.draw.rect(screen, WHITE, (yc_x, yc_y, 10, 16), 1)
+                intro_surf.set_alpha(alpha)
+                screen.blit(intro_surf, (0, 0))
 
-            t2_w, t2_h = font_team.size(t2_short)
-            for rc in range(red_cards_2):
-                rc_x = panel_x + panel_w - 75 - t2_w - 20 - rc * 15
-                rc_y = align_y - 30 + t2_h // 2 - 8
-                pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
-                pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
+            else:
+                # --- UI PANEL DRAWING ---
+                panel_w, panel_h = 500, 105
+                panel_x = WIDTH // 2 - panel_w // 2
+                table_surf = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
+                pygame.draw.rect(table_surf, TABLE_BG, (0, 0, panel_w, panel_h), border_radius=15)
+                screen.blit(table_surf, (panel_x, 20))
+                pygame.draw.rect(screen, CREAM, (panel_x, 20, panel_w, panel_h), 2, border_radius=15)
 
-            for yc in range(yellow_cards_2):
-                yc_x = panel_x + panel_w - 65 + (yc * 15)
-                yc_y = align_y - 30 + t2_h // 2 - 8
-                pygame.draw.rect(screen, (255, 220, 0), (yc_x, yc_y, 10, 16))
-                pygame.draw.rect(screen, WHITE, (yc_x, yc_y, 10, 16), 1)
+                align_y = 72
 
-            center_score_x = WIDTH // 2
-            draw_text_with_outline(screen, str(score1), font_score, t1_txt_col, center_score_x - 50, align_y, outline_col=WHITE)
-            draw_text_with_outline(screen, "-", font_score, BLACK, center_score_x, align_y, outline_col=WHITE)
-            draw_text_with_outline(screen, str(score2), font_score, t2_txt_col, center_score_x + 50, align_y, outline_col=WHITE)
+                t1_txt_col = get_readable_color(team1_colors)
+                t2_txt_col = get_readable_color(team2_colors)
 
-            ui_mins = frame_counter // FRAMES_PER_SIM_MINUTE
-            ui_sim_minute = ui_mins if state == "FIRST_HALF" else (45 + ui_mins)
+                t1_short = TEAMS[TEAM_NAMES[selected_home_idx]]["short"]
+                t2_short = TEAMS[TEAM_NAMES[selected_away_idx]]["short"]
 
-            time_str = ""
-            if state == "FIRST_HALF":
-                if display_added_time: time_str = f"45+{ui_sim_minute - 45}'"
-                else: time_str = f"{ui_sim_minute}'"
-            elif state == "HALFTIME": time_str = LANG[current_lang]["HT"]
-            elif state == "SECOND_HALF":
-                if display_added_time: time_str = f"90+{ui_sim_minute - 90}'"
-                else: time_str = f"{ui_sim_minute}'"
-            elif state == "FULLTIME": time_str = LANG[current_lang]["FT"]
+                draw_text_with_outline(screen, t1_short, font_team, t1_txt_col, panel_x + 75, align_y - 30, "left", outline_col=WHITE)
+                draw_text_with_outline(screen, t2_short, font_team, t2_txt_col, panel_x + panel_w - 75, align_y - 30, "right", outline_col=WHITE)
 
-            draw_text_with_outline(screen, time_str, font_timer, BLACK, WIDTH//2, 102, outline_col=WHITE)
+                t1_w, t1_h = font_team.size(t1_short)
+                for rc in range(red_cards_1):
+                    rc_x = panel_x + 75 + t1_w + 10 + rc * 15
+                    rc_y = align_y - 30 + t1_h // 2 - 8
+                    pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
+                    pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
 
-            notif_duration = 200
-            def draw_event_list(events_list, x_pos, team_color, align_right=False):
-                y_off = 130
-                recent_event = None
+                for yc in range(yellow_cards_1):
+                    yc_x = panel_x + 55 - (yc * 15)
+                    yc_y = align_y - 30 + t1_h // 2 - 8
+                    pygame.draw.rect(screen, (255, 220, 0), (yc_x, yc_y, 10, 16))
+                    pygame.draw.rect(screen, WHITE, (yc_x, yc_y, 10, 16), 1)
 
-                grouped_goals = {}
-                display_order = []
+                t2_w, t2_h = font_team.size(t2_short)
+                for rc in range(red_cards_2):
+                    rc_x = panel_x + panel_w - 75 - t2_w - 20 - rc * 15
+                    rc_y = align_y - 30 + t2_h // 2 - 8
+                    pygame.draw.rect(screen, RED_CARD_COLOR, (rc_x, rc_y, 10, 16))
+                    pygame.draw.rect(screen, WHITE, (rc_x, rc_y, 10, 16), 1)
 
-                for event_data in events_list:
-                    t_str, e_type, scorer, ev_frame, ev_state = event_data
-                    is_new = (ev_state == state) and (0 <= (frame_counter - ev_frame) < notif_duration)
+                for yc in range(yellow_cards_2):
+                    yc_x = panel_x + panel_w - 65 + (yc * 15)
+                    yc_y = align_y - 30 + t2_h // 2 - 8
+                    pygame.draw.rect(screen, (255, 220, 0), (yc_x, yc_y, 10, 16))
+                    pygame.draw.rect(screen, WHITE, (yc_x, yc_y, 10, 16), 1)
 
-                    if is_new:
-                        txt = f"{LANG[current_lang]['GOAL_EXCLAMATION']} {scorer} ({t_str})"
-                        recent_event = (txt, team_color)
+                center_score_x = WIDTH // 2
+                draw_text_with_outline(screen, str(score1), font_score, t1_txt_col, center_score_x - 50, align_y, outline_col=WHITE)
+                draw_text_with_outline(screen, "-", font_score, WHITE, center_score_x, align_y, outline_col=NAVY_DARK)
+                draw_text_with_outline(screen, str(score2), font_score, t2_txt_col, center_score_x + 50, align_y, outline_col=WHITE)
 
-                    if scorer not in grouped_goals:
-                        grouped_goals[scorer] = [t_str]
-                        display_order.append(scorer)
-                    else:
-                        if t_str not in grouped_goals[scorer]:
-                            grouped_goals[scorer].append(t_str)
+                ui_mins = frame_counter // FRAMES_PER_SIM_MINUTE
+                ui_sim_minute = ui_mins if state == "FIRST_HALF" else (45 + ui_mins)
 
-                visible_scorers = display_order[-5:]
+                time_str = ""
+                if state == "FIRST_HALF":
+                    if display_added_time: time_str = f"45+{ui_sim_minute - 45}'"
+                    else: time_str = f"{ui_sim_minute}'"
+                elif state == "HALFTIME": time_str = LANG[current_lang]["HT"]
+                elif state == "SECOND_HALF":
+                    if display_added_time: time_str = f"90+{ui_sim_minute - 90}'"
+                    else: time_str = f"{ui_sim_minute}'"
+                elif state == "FULLTIME": time_str = LANG[current_lang]["FT"]
 
-                for scorer in visible_scorers:
-                    times = grouped_goals[scorer]
-                    times_str = ", ".join(times)
-                    display_str = f"{scorer} {times_str}"
+                draw_text_with_outline(screen, time_str, font_timer, BLACK, WIDTH//2, 102, outline_col=WHITE)
 
-                    t_surf = font_goal_list.render(display_str, True, WHITE)
-                    draw_x = x_pos
-                    if align_right: draw_x = x_pos - t_surf.get_width()
-                    screen.blit(t_surf, (draw_x, y_off))
+                notif_duration = 200
+                def draw_event_list(events_list, x_pos, team_color, align_right=False):
+                    y_off = 130
+                    recent_event = None
 
-                    y_off += 20
-                return recent_event
+                    grouped_goals = {}
+                    display_order = []
 
-            recent1 = draw_event_list(goal_events_1, panel_x + 20, team1_colors[0], align_right=False)
-            recent2 = draw_event_list(goal_events_2, panel_x + panel_w - 20, team2_colors[0], align_right=True)
+                    for event_data in events_list:
+                        t_str, e_type, scorer, ev_frame, ev_state = event_data
+                        is_new = (ev_state == state) and (0 <= (frame_counter - ev_frame) < notif_duration)
 
-            notif_y = 150
-            def draw_big_notif(txt, col, y):
-                out_color = get_outline_color(col)
-                draw_text_with_outline(screen, txt, font_notification, col, WIDTH//2, y + 20, outline_col=out_color)
-                return y + 40
+                        if is_new:
+                            txt = f"{LANG[current_lang]['GOAL_EXCLAMATION']} {scorer} ({t_str})"
+                            recent_event = (txt, team_color)
 
-            if recent1: notif_y = draw_big_notif(recent1[0], recent1[1], notif_y)
-            if recent2: notif_y = draw_big_notif(recent2[0], recent2[1], notif_y)
+                        if scorer not in grouped_goals:
+                            grouped_goals[scorer] = [t_str]
+                            display_order.append(scorer)
+                        else:
+                            if t_str not in grouped_goals[scorer]:
+                                grouped_goals[scorer].append(t_str)
 
-            if goll_timer > 0 and state != "FULLTIME":
-                goll_surf = font_goll_msg.render(LANG[current_lang]["GOAL_EXCLAMATION"], True, goal_text_color)
-                out_color = get_outline_color(goal_text_color)
-                outline_surf = font_goll_msg.render(LANG[current_lang]["GOAL_EXCLAMATION"], True, out_color)
-                gx, gy = WIDTH//2 - goll_surf.get_width()//2, HEIGHT//2 - 50
-                screen.blit(outline_surf, (gx+4, gy+4))
-                screen.blit(goll_surf, (gx, gy))
+                    visible_scorers = display_order[-5:]
 
-            if state == "HALFTIME":
-                draw_text_with_outline(screen, LANG[current_lang]["HALF_TIME"], font_event, WHITE, center_x, center_y, outline_col=BLACK)
-            elif state == "FULLTIME":
-                draw_text_with_outline(screen, LANG[current_lang]["FULL_TIME"], font_event, WHITE, center_x, center_y, outline_col=BLACK)
+                    for scorer in visible_scorers:
+                        times = grouped_goals[scorer]
+                        times_str = ", ".join(times)
+                        display_str = f"{scorer} {times_str}"
 
-                if cinematic_timer <= 0:
-                    end_match_timer += 1
-                    if end_match_timer > 3 * FPS:
-                        restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
-                        pygame.draw.rect(screen, GRASS_1, restart_btn_rect, border_radius=15)
-                        pygame.draw.rect(screen, WHITE, restart_btn_rect, 3, border_radius=15)
-                        restart_txt = font_menu_title.render(LANG[current_lang]["BACK_TO_MENU"], True, WHITE)
-                        restart_txt_rect = restart_txt.get_rect(center=restart_btn_rect.center)
-                        screen.blit(restart_txt, restart_txt_rect)
+                        t_surf = font_goal_list.render(display_str, True, CREAM)
+                        draw_x = x_pos
+                        if align_right: draw_x = x_pos - t_surf.get_width()
+                        screen.blit(t_surf, (draw_x, y_off))
+
+                        y_off += 20
+                    return recent_event
+
+                recent1 = draw_event_list(goal_events_1, panel_x + 20, team1_colors[0], align_right=False)
+                recent2 = draw_event_list(goal_events_2, panel_x + panel_w - 20, team2_colors[0], align_right=True)
+
+                notif_y = 150
+                def draw_big_notif(txt, col, y):
+                    out_color = get_outline_color(col)
+                    draw_text_with_outline(screen, txt, font_notification, col, WIDTH//2, y + 20, outline_col=out_color)
+                    return y + 40
+
+                if recent1: notif_y = draw_big_notif(recent1[0], recent1[1], notif_y)
+                if recent2: notif_y = draw_big_notif(recent2[0], recent2[1], notif_y)
+
+                if goll_timer > 0 and state != "FULLTIME":
+                    goll_surf = font_goll_msg.render(LANG[current_lang]["GOAL_EXCLAMATION"], True, goal_text_color)
+                    out_color = get_outline_color(goal_text_color)
+                    outline_surf = font_goll_msg.render(LANG[current_lang]["GOAL_EXCLAMATION"], True, out_color)
+                    gx, gy = WIDTH//2 - goll_surf.get_width()//2, HEIGHT//2 - 50
+                    screen.blit(outline_surf, (gx+4, gy+4))
+                    screen.blit(goll_surf, (gx, gy))
+
+                if state == "HALFTIME":
+                    draw_text_with_outline(screen, LANG[current_lang]["HALF_TIME"], font_event, CREAM, center_x, center_y, outline_col=NAVY_DARK)
+                elif state == "FULLTIME":
+                    draw_text_with_outline(screen, LANG[current_lang]["FULL_TIME"], font_event, CREAM, center_x, center_y, outline_col=NAVY_DARK)
+
+                    if cinematic_timer <= 0:
+                        end_match_timer += 1
+                        if end_match_timer > 3 * FPS:
+                            restart_btn_rect = pygame.Rect(WIDTH//2 - 150, HEIGHT - 100, 300, 60)
+                            pygame.draw.rect(screen, GRASS_1, restart_btn_rect, border_radius=15)
+                            pygame.draw.rect(screen, CREAM, restart_btn_rect, 3, border_radius=15)
+                            restart_txt = font_menu_title.render(LANG[current_lang]["BACK_TO_MENU"], True, CREAM)
+                            restart_txt_rect = restart_txt.get_rect(center=restart_btn_rect.center)
+                            screen.blit(restart_txt, restart_txt_rect)
 
         shake_x, shake_y = 0, 0
         if screen_shake_timer > 0:
@@ -1675,7 +1869,7 @@ while running:
             shake_y = random.randint(-shake_intensity, shake_intensity)
             screen_shake_timer -= 1
 
-        main_screen.fill((15, 15, 15))
+        main_screen.fill(NAVY_DARK)
         main_screen.blit(screen, (shake_x, shake_y))
 
     pygame.display.flip()
