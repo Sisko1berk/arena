@@ -42,11 +42,11 @@ JUVENTUS: Vlahovic, Kenan Yıldız, Teun Koopmeiners, Nico Gonzalez, Douglas Lui
 ATALANTA: Scamacca, Zalewski, Pasalic
 ROMA: Artem Dovbyk, Paulo Dybala, Lorenzo Pellegrini, Soulé, El Shaarawy
 LAZIO: Taty Castellanos, Zaccagni, Dia, Guendouzi, Noslin
-PSG: Bradley Barcola, Ousmane Dembele, Gonçalo Ramos, Kolo Muani, Vitinha
+PSG: Bradley Barcola, Ousmane Dembele, Gonçalo Ramos, Kvaratskhelia, Vitinha
 LILLE: Jonathan David, Zhegrova, Angel Gomes, Sahraoui, Cabella
 MONACO: Breel Embolo, George Ilenikhena, Akliouche, Minamino, Golovin
 BENFICA: Vangelis Pavlidis, Angel Di Maria, Amdouni
-SPORTING: Viktor Gyökeres, Trincao, Pedro Goncalves, Harder, Hjulmand
+SPORTING: Luis Javier Suárez, Fotis Ioannidis, Geovany Quenda, Geny Catamo
 PORTO: Samu Omorodion, Galeno, Fabio Vieira, Nico Gonzalez, Pepê
 AJAX: Wout Weghorst, Brian Brobbey, Bertrand Traoré, Jordan Henderson, Taylor
 PSV: Luuk de Jong, Noa Lang, Johan Bakayoko, Ivan Perisic, Til
@@ -69,7 +69,7 @@ CLUB BRUGGE: Tzolis, Vanaken, Tresoldi, Forbs
 NEWCASTLE: Harvey Barnes, Anthony Gordon, Yoane Wissa, Tonali
 QARABAG: Camilo Duràn, Musa Qurbanlı, Kady Borges, Leandro Andrade
 OLYMPIACOS: El Kaabi, Mehdi Taremi,  Gelson Martins, Chiquinho, Podence
-BODO/GLIMT: Hauge, Evjen, Bjørkan, Berg, Høgh
+BODO/GLIMT: Hauge, Høgh, Blomberg, Määttä
 WEST HAM Jarrod Bowen, Adama Traoré, Callum Wilson, Tomáš Souček
 LEEDS UTD: Dominic Calvert-Lewin, Lukas Nmecha, Joël Piroe, Wilfried Gnonto
 NAPOLI: Khvicha Kvaratskhelia, Romelu Lukaku, Scott McTominay
