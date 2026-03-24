@@ -56,6 +56,32 @@ LANG = {
         "LANG_BTN": "ENG"
     }
 }
+
+# Milli takımların İngilizce isim eşleştirmeleri
+TEAM_TRANSLATIONS_EN = {
+    "TÜRKİYE": "TURKIYE",
+    "ROMANYA": "ROMANIA",
+    "ÇEKYA": "CZECHIA",
+    "İRLANDA": "IRELAND",
+    "DANİMARKA": "DENMARK",
+    "KUZEY MAKEDONYA": "NORTH MACEDONIA",
+    "İTALYA": "ITALY",
+    "KUZEY İRLANDA": "NORTHERN IRELAND",
+    "POLONYA": "POLAND",
+    "ARNAVUTLUK": "ALBANIA",
+    "SLOVAKYA": "SLOVAKIA",
+    "KOSOVA": "KOSOVO",
+    "UKRAYNA": "UKRAINE",
+    "İSVEÇ": "SWEDEN",
+    "GALLER": "WALES",
+    "BOSNA HERSEK": "BOSNIA & HERZ."
+}
+
+def get_team_display_name(team_key):
+    if current_lang == "ENG" and team_key in TEAM_TRANSLATIONS_EN:
+        return TEAM_TRANSLATIONS_EN[team_key]
+    return team_key
+
 lang_btn_rect = pygame.Rect(20, 20, 60, 40)
 
 # =====================================================================
@@ -86,14 +112,13 @@ POST_ELASTICITY = 1.04
 # =====================================================================
 #                        4. BRAND & GAME COLORS
 # =====================================================================
-NAVY = (0, 33, 71)          # Main brand Navy (Pitch, backgrounds)
-NAVY_LIGHT = (0, 45, 95)    # Slightly lighter Navy for pitch stripes
-NAVY_DARK = (0, 20, 50)     # Darker Navy for UI Backgrounds
-CREAM = (255, 253, 218)     # Main brand Cream (UI text, borders, outer arena edge)
-BURNT_ORANGE = (204, 85, 0) # Accent 1 (Selections, buttons)
-TERRACOTTA = (226, 114, 91) # Accent 2 (Menu Titles, Goal messages)
+NAVY = (0, 33, 71)
+NAVY_LIGHT = (0, 45, 95)
+NAVY_DARK = (0, 20, 50)
+CREAM = (255, 253, 218)
+BURNT_ORANGE = (204, 85, 0)
+TERRACOTTA = (226, 114, 91)
 
-# Specific UI / Environment color assignments
 GRASS_1 = NAVY
 GRASS_2 = NAVY_LIGHT
 MENU_BG = NAVY_DARK
@@ -103,7 +128,6 @@ SCROLLBAR_HANDLE = CREAM
 OVERLAY_BG = (0, 20, 50, 200)
 TABLE_BG = (0, 20, 50, 230)
 
-# Exempted Core Colors (Specifically preserved for elements like goal frame, timer, etc)
 WHITE = (245, 245, 245)
 BLACK = (10, 10, 10)
 NET_COLOR = (200, 200, 200)
@@ -133,12 +157,11 @@ GOAL2_FILE = "goal2.wav"
 GOAL3_FILE = "goal3.wav"
 
 master_vol = 1.0
-vol_settings = {"stadium": 0.45, "music": 0.5, "collision": 0.02, "whistle": 0.4, "miss": 0.4}
+vol_settings = {"stadium": 0.40, "music": 0.55, "collision": 0.02, "whistle": 0.45, "miss": 0.45}
 
 # =====================================================================
 #                        6. TEAM DATABASE & LOGOS
 # =====================================================================
-# Team database is excluded from color overrides to maintain real team colors
 TEAMS = {
     "GALATASARAY":    {"colors": [(169, 4, 50), (253, 185, 18)], "short": "GS"},
     "FENERBAHÇE":     {"colors": [(255, 255, 0), (0, 0, 128)],   "short": "FB"},
@@ -248,7 +271,6 @@ TEAMS = {
     "TORINO":         {"colors": [(138, 30, 50), (255, 255, 255)], "short": "TOR"},
     "UDINESE":        {"colors": [(0, 0, 0), (255, 255, 255)],     "short": "UDI"},
     "VERONA":         {"colors": [(0, 51, 102), (255, 204, 0)],    "short": "VER"},
-    # --- LA LIGA (NEW) ---
     "ATHLETIC CLUB":  {"colors": [(237, 28, 36), (255, 255, 255)], "short": "ATH"},
     "REAL SOCIEDAD":  {"colors": [(0, 103, 177), (255, 255, 255)], "short": "RSO"},
     "VILLARREAL":     {"colors": [(255, 230, 0), (0, 0, 102)],     "short": "VIL"},
@@ -264,8 +286,6 @@ TEAMS = {
     "ELCHE":          {"colors": [(0, 100, 0), (255, 255, 255)],   "short": "ELC"},
     "OVIEDO":         {"colors": [(0, 51, 160), (255, 255, 255)],  "short": "OVI"},
     "LEVANTE":        {"colors": [(0, 51, 102), (153, 0, 51)],     "short": "LEV"},
-
-    # --- LIGUE 1 (NEW) ---
     "MARSEILLE":      {"colors": [(255, 255, 255), (0, 150, 214)], "short": "OM"},
     "LYON":           {"colors": [(255, 255, 255), (218, 41, 28)], "short": "OL"},
     "LENS":           {"colors": [(237, 28, 36), (255, 215, 0)],   "short": "RCL"},
@@ -281,8 +301,6 @@ TEAMS = {
     "LE HAVRE":       {"colors": [(111, 172, 222), (0, 31, 73)],   "short": "HAC"},
     "AUXERRE":        {"colors": [(255, 255, 255), (0, 68, 148)],  "short": "AJA"},
     "SAINT-ETIENNE":  {"colors": [(0, 102, 51), (255, 255, 255)],  "short": "ASE"},
-
-    # --- MLS (NEW) ---
     "INTER MIAMI":    {"colors": [(244, 181, 205), (0, 0, 0)],     "short": "MIA"},
     "LAFC":           {"colors": [(0, 0, 0), (195, 158, 109)],     "short": "LAF"},
     "LA GALAXY":      {"colors": [(0, 36, 93), (255, 210, 0)],     "short": "LAG"},
@@ -313,8 +331,6 @@ TEAMS = {
     "ST. LOUIS CITY": {"colors": [(226, 24, 54), (0, 43, 92)],     "short": "STL"},
     "TORONTO FC":     {"colors": [(227, 38, 54), (32, 42, 68)],    "short": "TFC"},
     "SAN DIEGO FC":   {"colors": [(0, 193, 213), (0, 0, 0)],       "short": "SDF"},
-
-    # --- SAUDI PRO LEAGUE (NEW) ---
     "AL HILAL":       {"colors": [(0, 94, 184), (255, 255, 255)],  "short": "HIL"},
     "AL NASSR":       {"colors": [(254, 209, 65), (0, 52, 120)],   "short": "NAS"},
     "AL AHLI":        {"colors": [(0, 166, 81), (255, 255, 255)],  "short": "AHL"},
@@ -333,6 +349,24 @@ TEAMS = {
     "AL OKHDOOD":     {"colors": [(0, 191, 255), (255, 255, 255)], "short": "OKH"},
     "NEOM SC":        {"colors": [(0, 0, 139), (255, 215, 0)],     "short": "NEO"},
     "AL KHOLOOD":     {"colors": [(255, 0, 0), (255, 255, 255)],   "short": "KHO"},
+
+    # --- MİLLİ TAKIMLAR ---
+    "TÜRKİYE":        {"colors": [(227, 10, 23), (255, 255, 255)], "short": "TUR"},
+    "ROMANYA":        {"colors": [(252, 209, 22), (0, 43, 127)],   "short": "ROU"},
+    "ÇEKYA":          {"colors": [(215, 20, 26), (17, 69, 126)],   "short": "CZE"},
+    "İRLANDA":        {"colors": [(22, 155, 98), (255, 255, 255)], "short": "IRL"},
+    "DANİMARKA":      {"colors": [(198, 12, 48), (255, 255, 255)], "short": "DEN"},
+    "KUZEY MAKEDONYA":{"colors": [(210, 0, 36), (255, 209, 0)],    "short": "MKD"},
+    "İTALYA":         {"colors": [(0, 93, 170), (255, 255, 255)],  "short": "ITA"},
+    "KUZEY İRLANDA":  {"colors": [(0, 158, 96), (255, 255, 255)],  "short": "NIR"},
+    "POLONYA":        {"colors": [(255, 255, 255), (220, 20, 60)], "short": "POL"},
+    "ARNAVUTLUK":     {"colors": [(228, 30, 32), (0, 0, 0)],       "short": "ALB"},
+    "SLOVAKYA":       {"colors": [(11, 78, 162), (255, 255, 255)], "short": "SVK"},
+    "KOSOVA":         {"colors": [(36, 74, 165), (206, 166, 32)],  "short": "KOS"},
+    "UKRAYNA":        {"colors": [(255, 215, 0), (0, 87, 183)],    "short": "UKR"},
+    "İSVEÇ":          {"colors": [(254, 204, 0), (0, 106, 167)],   "short": "SWE"},
+    "GALLER":         {"colors": [(211, 8, 47), (255, 255, 255)],  "short": "WAL"},
+    "BOSNA HERSEK":   {"colors": [(0, 35, 149), (254, 203, 0)],    "short": "BIH"}
 }
 
 TEAM_NAMES = sorted(list(TEAMS.keys()))
@@ -451,8 +485,8 @@ if os.path.exists(MISS_SOUND_FILE):
 def play_miss_sound():
     if 'miss_sound' in globals() and miss_sound:
         try:
-            miss_sound.stop() # Çalıyorsa hemen kes!
-            miss_sound.play() # Baştan başlat
+            miss_sound.stop()
+            miss_sound.play()
         except: pass
 
 goal_sounds = {}
@@ -510,75 +544,45 @@ LOGO_FILES_PL = {
 }
 
 LOGO_FILES_DE = {
-    "AUG": "augsburg.png",
-    "BAY": "bayern.png",
-    "BVB": "dortmund.png",
-    "FRA": "frankfurt.png",
-    "FRE": "freiburg.png",
-    "HSV": "hamburg.png",
-    "HEI": "heidenheim.png",
-    "HOF": "hoffenheim.png",
-    "KÖL": "koln.png",
-    "RBL": "leipzig.png",
-    "B04": "leverkusen.png",
-    "MAI": "mainz.png",
-    "BMG": "monchengladbach.png",
-    "STP": "stpauli.png",
-    "VFB": "stuttgart.png",
-    "UNB": "unionberlin.png",
-    "WER": "werderbremen.png",
-    "WOB": "wolfsburg.png"
+    "AUG": "augsburg.png", "BAY": "bayern.png", "BVB": "dortmund.png",
+    "FRA": "frankfurt.png", "FRE": "freiburg.png", "HSV": "hamburg.png",
+    "HEI": "heidenheim.png", "HOF": "hoffenheim.png", "KÖL": "koln.png",
+    "RBL": "leipzig.png", "B04": "leverkusen.png", "MAI": "mainz.png",
+    "BMG": "monchengladbach.png", "STP": "stpauli.png", "VFB": "stuttgart.png",
+    "UNB": "unionberlin.png", "WER": "werderbremen.png", "WOB": "wolfsburg.png"
 }
 
 LOGO_FILES_IT = {
-    "ATA": "atalanta.png",
-    "BOL": "bologna.png",
-    "CAG": "cagliari.png",
-    "COM": "como.png",
-    "CRE": "cremonese.png",
-    "FIO": "fiorentina.png",
-    "GNO": "genoa.png",
-    "INT": "inter.png",
-    "JUV": "juventus.png",
-    "LAZ": "lazio.png",
-    "LEC": "lecce.png",
-    "MIL": "milan.png",
-    "NAP": "napoli.png",
-    "PAR": "parma.png",
-    "PIS": "pisa.png",
-    "ROM": "roma.png",
-    "SAS": "sassuolo.png",
-    "TOR": "torino.png",
-    "UDI": "udinese.png",
-    "VER": "verona.png"
+    "ATA": "atalanta.png", "BOL": "bologna.png", "CAG": "cagliari.png",
+    "COM": "como.png", "CRE": "cremonese.png", "FIO": "fiorentina.png",
+    "GNO": "genoa.png", "INT": "inter.png", "JUV": "juventus.png",
+    "LAZ": "lazio.png", "LEC": "lecce.png", "MIL": "milan.png",
+    "NAP": "napoli.png", "PAR": "parma.png", "PIS": "pisa.png",
+    "ROM": "roma.png", "SAS": "sassuolo.png", "TOR": "torino.png",
+    "UDI": "udinese.png", "VER": "verona.png"
 }
-# İSPANYOL TAKIMLARI (imagesSP klasörü)
+
 LOGO_FILES_SP = {
-    "ALA": "alaves.png",
-    "ATH": "athleticbilbao.png",
-    "ATM": "atleticomadrid.png",
-    "BAR": "barcelona.png",
-    "CEL": "celtavigo.png",
-    "ELC": "elche.png",
-    "ESP": "espanyol.png",
-    "GET": "getafe.png",
-    "GIR": "girona.png",
-    "LEV": "levante.png",
-    "MLL": "mallorca.png",
-    "OSA": "osasuna.png",
-    "RAY": "rayovallecano.png",
-    "BET": "realbetis.png",
-    "RMA": "realmadrid.png",
-    "OVI": "realoviedo.png",
-    "RSO": "realsociedad.png",
-    "SEV": "sevilla.png",
-    "VAL": "valencia.png",
-    "VIL": "villereal.png"
+    "ALA": "alaves.png", "ATH": "athleticbilbao.png", "ATM": "atleticomadrid.png",
+    "BAR": "barcelona.png", "CEL": "celtavigo.png", "ELC": "elche.png",
+    "ESP": "espanyol.png", "GET": "getafe.png", "GIR": "girona.png",
+    "LEV": "levante.png", "MLL": "mallorca.png", "OSA": "osasuna.png",
+    "RAY": "rayovallecano.png", "BET": "realbetis.png", "RMA": "realmadrid.png",
+    "OVI": "realoviedo.png", "RSO": "realsociedad.png", "SEV": "sevilla.png",
+    "VAL": "valencia.png", "VIL": "villereal.png"
+}
+
+LOGO_FILES_ULKE = {
+    "TUR": "turkiye.png", "ROU": "romania.png", "CZE": "czechia.png",
+    "IRL": "ireland.png", "DEN": "denmark.png", "MKD": "northmacedonia.png",
+    "ITA": "italy.png", "NIR": "northernireland.png", "POL": "poland.png",
+    "ALB": "albania.png", "SVK": "slovakia.png", "KOS": "kosovo.png",
+    "UKR": "ukraine.png", "SWE": "sweden.png", "WAL": "wales.png",
+    "BIH": "bih.png"
 }
 
 def load_and_format_logo(filepath, target_size, padding_factor=0.75):
-    if not os.path.exists(filepath):
-        return None
+    if not os.path.exists(filepath): return None
     try:
         img = pygame.image.load(filepath).convert_alpha()
         orig_w, orig_h = img.get_size()
@@ -595,29 +599,29 @@ def load_and_format_logo(filepath, target_size, padding_factor=0.75):
         return None
 
 for team_short, filename in LOGO_FILES.items():
-    file_path = get_safe_path("imagesTR", filename)
-    formatted_logo = load_and_format_logo(file_path, logo_size)
+    formatted_logo = load_and_format_logo(get_safe_path("imagesTR", filename), logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
 
 for team_short, filename in LOGO_FILES_PL.items():
-    file_path = get_safe_path("imagesPL", filename)
-    formatted_logo = load_and_format_logo(file_path, logo_size)
+    formatted_logo = load_and_format_logo(get_safe_path("imagesPL", filename), logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
 
 for team_short, filename in LOGO_FILES_DE.items():
-    file_path = get_safe_path("imagesDE", filename)
-    formatted_logo = load_and_format_logo(file_path, logo_size)
+    formatted_logo = load_and_format_logo(get_safe_path("imagesDE", filename), logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
 
 for team_short, filename in LOGO_FILES_IT.items():
-    file_path = get_safe_path("imagesIT", filename)
-    formatted_logo = load_and_format_logo(file_path, logo_size)
+    formatted_logo = load_and_format_logo(get_safe_path("imagesIT", filename), logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
 
 for team_short, filename in LOGO_FILES_SP.items():
-    file_path = get_safe_path("imagesSP", filename)
-    formatted_logo = load_and_format_logo(file_path, logo_size)
+    formatted_logo = load_and_format_logo(get_safe_path("imagesSP", filename), logo_size)
     if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
+
+for team_short, filename in LOGO_FILES_ULKE.items():
+    formatted_logo = load_and_format_logo(get_safe_path("imagesulke", filename), logo_size)
+    if formatted_logo: TEAM_LOGOS[team_short] = formatted_logo
+
 # =====================================================================
 #                        9. FONTS & UI HELPERS
 # =====================================================================
@@ -642,10 +646,8 @@ def get_readable_color(colors):
     c1 = colors[1]
     lum0 = 0.299 * c0[0] + 0.587 * c0[1] + 0.114 * c0[2]
     lum1 = 0.299 * c1[0] + 0.587 * c1[1] + 0.114 * c1[2]
-
     if lum1 > 190:
-        if lum0 > 190:
-            return c0 if lum0 < lum1 else c1
+        if lum0 > 190: return c0 if lum0 < lum1 else c1
         return c0
     return c1
 
@@ -688,18 +690,13 @@ def draw_striped_pitch(surface, cx, cy, radius):
         scale = 4
         surf_size = (radius + pad) * 2 * scale
         c_hr = surf_size // 2
-
         lines_surf_hires = pygame.Surface((surf_size, surf_size), pygame.SRCALPHA)
-
         pygame.draw.circle(lines_surf_hires, CREAM, (c_hr, c_hr), radius * scale, 6 * scale)
-
         line_len = radius - 20
         start_x = c_hr - line_len * scale
         end_x = c_hr + line_len * scale
         pygame.draw.line(lines_surf_hires, WHITE, (start_x, c_hr), (end_x, c_hr), 4 * scale)
-
         pygame.draw.circle(lines_surf_hires, WHITE, (c_hr, c_hr), 50 * scale, 4 * scale)
-
         target_size = (radius + pad) * 2
         draw_striped_pitch.cached_lines = pygame.transform.smoothscale(lines_surf_hires, (target_size, target_size))
 
@@ -852,16 +849,15 @@ class Ball:
         self.shadow_offset = 8
 
         self.history = []
-        self.max_history = 20  # İzlerin kuyruğunu daha net görebilmek için kapasiteyi 20'ye çıkardık
+        self.max_history = 20
 
-        # Hıza oranlanacak iz yüzeylerini (kendi takım renkleriyle) en başta hazırlıyoruz
         self.trail_surfaces = []
         for i in range(self.max_history):
             ratio = i / self.max_history
             trail_radius = int(self.radius * ratio * 0.85)
             if trail_radius > 0:
                 surf = pygame.Surface((trail_radius * 2, trail_radius * 2), pygame.SRCALPHA)
-                alpha = int(255 * ratio * 0.6) # Maksimum opaklık %60
+                alpha = int(255 * ratio * 0.6)
                 pygame.gfxdraw.aacircle(surf, trail_radius, trail_radius, trail_radius, (*self.color[0], alpha))
                 pygame.gfxdraw.filled_circle(surf, trail_radius, trail_radius, trail_radius, (*self.color[0], alpha))
                 self.trail_surfaces.append((trail_radius, surf))
@@ -904,22 +900,14 @@ class Ball:
         self.y += self.vy
 
     def draw(self, surface):
-        # --- 1. HIZA ORANTILI DİNAMİK İZ (Kuyruk) ÇİZİMİ ---
         current_speed = math.hypot(self.vx, self.vy)
-
-        # Hızı SPEED değişkenine göre 0.0 ile 1.0 arasına oranlıyoruz
-        # Top yavaşladığında iz azalacak, hızlandığında iz artacak
         speed_ratio = max(0.0, min(1.0, current_speed / (SPEED * 1.1)))
-
-        # Hıza göre kuyruğun ne kadar uzun olacağını belirliyoruz
         visible_points = int(len(self.history) * speed_ratio)
 
         if visible_points > 0 and len(self.history) > 0:
             start_idx = len(self.history) - visible_points
             for i in range(start_idx, len(self.history)):
                 hx, hy = self.history[i]
-
-                # History indexini, trail_surfaces indexine doğru bir şekilde oranlıyoruz
                 if visible_points > 1:
                     surf_idx = int(((i - start_idx) / (visible_points - 1)) * (self.max_history - 1))
                 else:
@@ -928,18 +916,14 @@ class Ball:
                 tr, surf = self.trail_surfaces[surf_idx]
 
                 if surf:
-                    # Topun hızına göre kuyruğun opaklığını (saydamlığını) dinamik ayarlıyoruz
                     temp_surf = surf.copy()
-                    # Pygame'de set_alpha ile var olan alpha değerleri hızımız oranında çarpılır (soluklaşır veya netleşir)
                     temp_surf.set_alpha(int(255 * speed_ratio))
                     surface.blit(temp_surf, (int(hx) - tr, int(hy) - tr))
 
-        # --- 2. GÖLGE ÇİZİMİ ---
         shadow_surf = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(shadow_surf, SHADOW_COLOR, (self.radius, self.radius), self.radius - 2)
         surface.blit(shadow_surf, (int(self.x) - self.radius + self.shadow_offset, int(self.y) - self.radius + self.shadow_offset))
 
-        # --- 3. TOPUN KENDİSİ VE DESENİ ---
         scale = 3
         sr = self.radius * scale
         hr_surf = pygame.Surface((sr * 2, sr * 2), pygame.SRCALPHA)
@@ -1248,7 +1232,6 @@ def quit_match():
     state = "MENU"
     goal_angle = 1 * math.pi / 2
 
-    # EKSİK OLAN KISIM: Menüye dönüldüğünde maçtaki BÜTÜN hayalet verileri temizle
     goal_events_1.clear()
     goal_events_2.clear()
     goll_timer = 0
@@ -1270,7 +1253,6 @@ def start_match():
     global intro_timer, home_full_name, away_full_name
     global near_miss_timer, goll_timer, display_added_time, end_match_timer
 
-    # Yeni maça başlarken her şeyi TAMAMEN sıfırla
     score1, score2, frame_counter, goal_rotating, goal_angle, screen_shake_timer = 0, 0, 0, False, 1 * math.pi / 2, 0
     particles = []
     near_miss_timer = 0
@@ -1301,8 +1283,8 @@ def start_match():
     home_key = TEAM_NAMES[selected_home_idx]
     away_key = TEAM_NAMES[selected_away_idx]
 
-    home_full_name = home_key
-    away_full_name = away_key
+    home_full_name = get_team_display_name(home_key)
+    away_full_name = get_team_display_name(away_key)
 
     team1_name = TEAMS[home_key]["short"]
     team2_name = TEAMS[away_key]["short"]
@@ -1336,7 +1318,6 @@ def start_match():
 # =====================================================================
 running = True
 while running:
-    # --- EVENT HANDLING ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -1376,7 +1357,7 @@ while running:
                     if handle.collidepoint(mx, my) or rect.collidepoint(mx, my):
                         slider_dragging = key
 
-                filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+                filtered_teams = [key for key in TEAM_NAMES if search_text.lower() in get_team_display_name(key).lower()]
                 visible_h = HEIGHT - 250
                 total_items_h = len(filtered_teams) * 40
                 max_scroll = total_items_h - visible_h
@@ -1399,10 +1380,10 @@ while running:
                     is_dragging_scroll = True
                     mouse_offset_y = my - handle_y
 
-                for i, name in enumerate(filtered_teams):
+                for i, key in enumerate(filtered_teams):
                     item_y = 150 + i * 40 + menu_scroll_y
                     if item_y > 140 and item_y < HEIGHT - 110:
-                        orig_idx = TEAM_NAMES.index(name)
+                        orig_idx = TEAM_NAMES.index(key)
                         rect1 = pygame.Rect(50, item_y, 220, 30)
                         if rect1.collidepoint(mx, my): selected_home_idx = orig_idx
                         rect2 = pygame.Rect(300, item_y, 220, 30)
@@ -1416,7 +1397,7 @@ while running:
 
         elif event.type == pygame.MOUSEMOTION:
             if is_dragging_scroll:
-                filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+                filtered_teams = [key for key in TEAM_NAMES if search_text.lower() in get_team_display_name(key).lower()]
                 visible_h = HEIGHT - 250
                 total_items_h = len(filtered_teams) * 40
                 max_scroll = total_items_h - visible_h
@@ -1444,7 +1425,7 @@ while running:
 
         elif event.type == pygame.MOUSEWHEEL:
             if state == "MENU":
-                filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+                filtered_teams = [key for key in TEAM_NAMES if search_text.lower() in get_team_display_name(key).lower()]
                 visible_h = HEIGHT - 250
                 total_items_h = len(filtered_teams) * 40
                 max_scroll = total_items_h - visible_h
@@ -1494,19 +1475,22 @@ while running:
             search_surf = font_settings.render(prompt_text, True, txt_color)
             screen.blit(search_surf, (60, 115))
 
-            filtered_teams = [name for name in TEAM_NAMES if search_text.lower() in name.lower()]
+            filtered_teams = [key for key in TEAM_NAMES if search_text.lower() in get_team_display_name(key).lower()]
 
             clip_rect = pygame.Rect(0, 150, 570, HEIGHT - 260)
             screen.set_clip(clip_rect)
-            for i, name in enumerate(filtered_teams):
-                orig_idx = TEAM_NAMES.index(name)
+            for i, key in enumerate(filtered_teams):
+                orig_idx = TEAM_NAMES.index(key)
                 item_y = 150 + i * 40 + menu_scroll_y
                 if item_y < 130 or item_y > HEIGHT - 100: continue
+                disp_name = get_team_display_name(key)
+
                 col = SELECTED_COLOR if orig_idx == selected_home_idx else CREAM
-                name_surf = font_menu_item.render(name, True, col)
+                name_surf = font_menu_item.render(disp_name, True, col)
                 screen.blit(name_surf, (50, item_y))
+
                 col = SELECTED_COLOR if orig_idx == selected_away_idx else CREAM
-                name_surf = font_menu_item.render(name, True, col)
+                name_surf = font_menu_item.render(disp_name, True, col)
                 screen.blit(name_surf, (300, item_y))
             screen.set_clip(None)
 
@@ -1662,20 +1646,16 @@ while running:
                     hit_post1 = b.collide_post(p1[0], p1[1])
                     hit_post2 = b.collide_post(p2[0], p2[1])
 
-                    # Top direğe değdiği an beklemeden sesi kesip baştan başlatır
                     if (hit_post1 or hit_post2) and state != "FULLTIME":
                         play_miss_sound()
 
                 for _ in range(8):
-                    # BİRİNCİ TOPUN DUVARA ÇARPMASI
                     if ball1.collide_wall(center_x, center_y, ARENA_RADIUS) and state != "FULLTIME":
                         play_collision_sound()
 
-                    # İKİNCİ TOPUN DUVARA ÇARPMASI (BENİM SİLDİĞİM YER BURASIYDI)
                     if ball2.collide_wall(center_x, center_y, ARENA_RADIUS) and state != "FULLTIME":
                         play_collision_sound()
 
-                    # İKİ TOPUN BİRBİRİNE ÇARPMASI (BUNU DA SİLMİŞİM)
                     if resolve_collisions(ball1, ball2) and state != "FULLTIME":
                         play_collision_sound()
 
@@ -1764,7 +1744,6 @@ while running:
 
             for p in particles: p.draw(screen)
 
-            # --- YENİ: İNTRO VEYA UI ÇİZİMİ ---
             if state == "INTRO":
                 total_frames = int(1.0 * FPS)
                 fade_frames = int(0.2 * FPS)
@@ -1798,7 +1777,6 @@ while running:
                 screen.blit(intro_surf, (0, 0))
 
             else:
-                # --- UI PANEL DRAWING ---
                 panel_w, panel_h = 500, 105
                 panel_x = WIDTH // 2 - panel_w // 2
                 table_surf = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)

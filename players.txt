@@ -103,15 +103,15 @@ ST. PAULI: Jackson Irvine, Johannes Eggestein, Hauke Wahl
 HEIDENHEIM: Paul Wanner, Marvin Pieringer, Kevin Müller
 BOCHUM: Philipp Hofmann, Anthony Losilla, Felix Passlack
 HOLSTEIN KIEL: Lewis Holtby, Steven Skrzybski, Timo Becker
-BRIGHTON Kaoru Mitoma, Danny Welbeck, Pascal Groß, Matt O'Riley
+BRIGHTON: Kaoru Mitoma, Danny Welbeck, Pascal Groß, Matt O'Riley
 BRENTFORD: Igor Thiago, Fabio Carvalho, Mikkel Damsgaard, Reiss Nelson
-BOURNEMOUTH Enes Ünal, Evanilson, Justin Kluivert, Tyler Adams
+BOURNEMOUTH: Enes Ünal, Evanilson, Justin Kluivert, Tyler Adams
 FULHAM: Emile Smith Rowe, Alex Iwobi, Raúl Jiménez, Rodrigo Muniz, Harry Wilson
 CRYSTAL PALACE: Jean-Philippe Mateta, Ismaïla Sarr, Edward Nketiah, Brennan Johnson
-EVERTON Jack Grealish, Beto, Idrissa Gueye, Iliman Ndiaye
+EVERTON: Jack Grealish, Beto, Idrissa Gueye, Iliman Ndiaye
 WOLVES: Tolu Arokodare, Hee-Chan Hwang, João Gomes, Angel Gomes, Adam Armstrong
-BURNLEY Armando Broja, James Ward-Prowse, Hannibal Mejbri, Zeki Amdouni
-SUNDERLAND Granit Xhaka, Brian Brobbey, Bertrand Traoré, Wilson Isidor
+BURNLEY: Armando Broja, James Ward-Prowse, Hannibal Mejbri, Zeki Amdouni
+SUNDERLAND: Granit Xhaka, Brian Brobbey, Bertrand Traoré, Wilson Isidor
 LEICESTER: Jamie Vardy, Abdul Fatawu, Harry Winks
 SOUTHAMPTON: Kyle Walker-Peters, Adam Armstrong, Will Smallbone
 IPSWICH: Omari Hutchinson, Liam Delap, Leif Davis
@@ -193,3 +193,19 @@ AL QADSIAH: Pierre-Emerick Aubameyang, Nacho Fernandez, Ezequiel Fernandez
 AL OKHDOOD: Saviour Godwin, Alex Collado, Florin Tanase
 NEOM SC: Romarinho, Ahmed Hegazi, Salman Al-Faraj
 AL KHOLOOD: Myziane Maolida, Kevin N'Doram, William Troost-Ekong
+TÜRKİYE: Hakan Çalhanoğlu, Arda Güler, Kenan Yıldız, Barış Alper Yılmaz, Ferdi Kadıoğlu
+ROMANYA: Nicolae Stanciu, Denis Man, Valentin Mihaila, Radu Drăgușin, Răzvan Marin
+ÇEKYA: Patrik Schick, Tomáš Souček, Václav Černý, Vladimír Coufal, Antonín Barák
+İRLANDA: Evan Ferguson, Sammie Szmodics, Nathan Collins, Caoimhín Kelleher, Matt Doherty
+DANİMARKA: Christian Eriksen, Rasmus Højlund, Pierre-Emile Højbjerg, Andreas Christensen
+KUZEY MAKEDONYA: Eljif Elmas, Enis Bardhi, Ezgjan Alioski, Stole Dimitrievski, Bojan Miovski
+İTALYA: Nicolò Barella, Federico Dimarco, Alessandro Bastoni, Federico Chiesa
+KUZEY İRLANDA: Paddy McNair, Conor Bradley, Jonny Evans, Shea Charles, Dion Charles
+POLONYA: Robert Lewandowski, Piotr Zieliński, Sebastian Szymański, Jakub Kiwior,
+ARNAVUTLUK: Kristjan Asllani, Berat Djimsiti, Nedim Bajrami, Ylber Ramadani
+SLOVAKYA: Milan Škriniar, Stanislav Lobotka, Dávid Hancko, Ondrej Duda
+KOSOVA: Vedat Muriqi, Edon Zhegrova, Milot Rashica, Amir Rrahmani
+UKRAYNA: Artem Dovbyk, Mykhailo Mudryk, Oleksandr Zinchenko, Georgiy Sudakov, Ruslan Malinovskyi
+İSVEÇ: Alexander Isak, Viktor Gyökeres, Dejan Kulusevski, Emil Forsberg, Victor Lindelöf
+GALLER: Brennan Johnson, Harry Wilson, Ethan Ampadu, Kieffer Moore, Neco Williams
+BOSNA HERSEK: Edin Džeko, Ermedin Demirović, Sead Kolašinac, Amar Dedić, Miralem Pjanić
